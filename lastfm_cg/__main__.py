@@ -27,7 +27,7 @@ TIMEFRAME_VALUES = ['7day',
                     '12month',
                     'overall']
 
-MAX_ROW_VALUE = 10
+MAX_ROW_VALUE = 31
 
 
 def lastfmconnect():
@@ -91,6 +91,7 @@ def main():
             exit()
         logger.debug("top_albums : %s", top_albums)
         list_covers = [album.item.get_cover_image() for album in top_albums]
+        list_covers = [x for x in list_covers if x is not None]
         logger.debug("list_covers : %s", list_covers)
 
         list_responses = [requests.get(url).content for url in list_covers]
@@ -101,6 +102,12 @@ def main():
         list_comb = []
         for img in chunks(imgs, args.rows):
             list_arrays = [np.asarray(i.resize(min_shape)) for i in img]
+            while len(list_arrays) < args.rows:
+                logger.debug("Missing album cover. Creating empty square.")
+                list_arrays.append(np.asarray(
+                    np.zeros((min_shape[0],
+                              min_shape[1], 4),
+                             dtype=np.uint8)))
             list_comb.append(np.hstack(list_arrays))
 
         list_comb_arrays = [np.asarray(i) for i in list_comb]
@@ -133,7 +140,7 @@ def parse_args():
                         default="7day")
     parser.add_argument('--rows', '-r',
                         help="Number of rows\
-                             (Maximum value : 10. Default : 5)",
+                             (Maximum value : 31. Default : 5)",
                         type=int,
                         default=5)
     parser.add_argument('--username', '-u', help="Name of the user", type=str)
