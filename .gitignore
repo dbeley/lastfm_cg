@@ -1,7 +1,8 @@
+*.egg-info/
 *.png
 .venv/
-dist/
 Exports/
+__pycache__/
 config.ini
+dist/
 tags
-*.egg-info/
