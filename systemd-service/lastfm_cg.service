@@ -1,0 +1,11 @@
+[Unit]
+Description=lastfm_cg.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Documents/lastfm_cg
+# With pipenv
+ExecStart=%h/Documents/lastfm_cg/.venv/bin/python lastfm_cg -u diyod
+
+[Install]
+WantedBy=multi-user.target

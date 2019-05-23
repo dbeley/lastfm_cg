@@ -1,0 +1,6 @@
+*.png
+.venv/
+Exports/
+config.ini
+tags
+*.egg-info/
