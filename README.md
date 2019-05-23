@@ -1,14 +1,16 @@
 # lastfm_cg : lastfm collage generator
 
-Generate covers collage from album listened by a lastfm user.
+Generate covers collage from albums listened by a lastfm user.
 
-Needs a valid config file with your API lastfm keys (get them at https://www.last.fm/api) in ~/.config/lastfm_cg/ directory.
+This utility needs a valid config file with your lastfm API keys (get them at https://www.last.fm/api) in ~/.config/lastfm_cg/config.ini (see config_sample.ini for an example).
 
 ## Installation
 
 ```
 pip install lastfm_cg
 ```
+
+If you are an Archlinux user, you can install the AUR package [lastfm_cg-git](https://aur.archlinux.org/packages/lastfm_cg-git).
 
 ## Installation in a virtualenv
 
