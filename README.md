@@ -37,9 +37,9 @@ lastfm_cg -u USER
 lastfm_cg -u USER -t 7day -r 5
 ```
 
-Generate a collage for the user USER of the size 3x3 for all its history.
+Generate a collage for the user USER of the size 3x30 for all its history.
 
 ```
-lastfm_cg -u USER -t overall -r 3
-lastfm_cg --username USER --timeframe overall --rows 3
+lastfm_cg -u USER -t overall -r 3 -c 30
+lastfm_cg --username USER --timeframe overall --rows 3 --columns 30
 ```
