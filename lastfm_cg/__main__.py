@@ -10,6 +10,7 @@ import requests
 import requests_cache
 import os
 import numpy as np
+from tqdm import tqdm
 from PIL import Image
 from io import BytesIO
 
@@ -83,16 +84,18 @@ def main():
 
     # cache for python-requests
     if not args.disable_cache:
-        cache_folder = os.path.expanduser("~/.config/lastfm_cg/")
-        if not os.path.isfile(cache_folder + "lastfm_cg_cache.sqlite"):
-            original_folder = os.getcwd()
-            os.chdir(cache_folder)
-            requests_cache.install_cache("lastfm_cg_cache")
-            os.chdir(original_folder)
-        else:
-            requests_cache.configure(
-                os.path.expanduser("~/.config/lastfm_cg/lastfm_cg_cache")
-            )
+        cache_folder = os.path.expanduser("~/.local/share/lastfm_cg/")
+        if not os.path.exists(cache_folder):
+            logger.info("Cache folder not found. Creating %s", cache_folder)
+            os.makedirs(cache_folder)
+            if not os.path.isfile(cache_folder + "lastfm_cg_cache.sqlite"):
+                original_folder = os.getcwd()
+                os.chdir(cache_folder)
+                requests_cache.install_cache("lastfm_cg_cache")
+                os.chdir(original_folder)
+    requests_cache.configure(
+        os.path.expanduser(cache_folder + "lastfm_cg_cache")
+    )
 
     if args.username:
         user = network.get_user(args.username)
@@ -128,15 +131,18 @@ def main():
         exit()
 
     try:
+        logger.info("Retrieving top albums.")
         top_albums = user.get_top_albums(
             period=args.timeframe, limit=args.rows * args.columns
         )
         if len(top_albums) != args.rows * args.columns:
-            logger.error("Not enough albums. Choose a lower row value.")
+            logger.error(
+                "Not enough albums. Choose a lower rows/columns value or another timeframe."
+            )
             exit()
         logger.debug("len top_albums : %s", len(top_albums))
         list_covers = []
-        for index, album in enumerate(top_albums, 1):
+        for index, album in enumerate(tqdm(top_albums, dynamic_ncols=True), 1):
             try:
                 logger.debug(
                     "Retrieving cover for album %s - %s", index, album.item
@@ -147,11 +153,16 @@ def main():
         list_covers = [x for x in list_covers if x is not None]
         logger.debug("len list_covers : %s", len(list_covers))
 
-        list_responses = [requests.get(url).content for url in list_covers]
+        logger.info("Downloading cover images.")
+        list_responses = [
+            requests.get(url).content
+            for url in tqdm(list_covers, dynamic_ncols=True)
+        ]
         imgs = [Image.open(BytesIO(i)) for i in list_responses]
 
         min_shape = sorted([(np.sum(i.size), i.size) for i in imgs])[0][1]
 
+        logger.info("Creating image.")
         list_comb = []
         for img in chunks(imgs, args.columns):
             list_arrays = [np.asarray(i.resize(min_shape)) for i in img]
@@ -183,7 +194,7 @@ def main():
         logger.error(e)
         exit()
 
-    logger.debug("Runtime : %.2f seconds." % (time.time() - temps_debut))
+    logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
 
 
 def parse_args():

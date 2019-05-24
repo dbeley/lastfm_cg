@@ -13,6 +13,7 @@ requests = "*"
 e1839a8 = {editable = true,path = "."}
 lastfm-cg = {editable = true,path = "."}
 requests-cache = "*"
+tqdm = "*"
 
 [requires]
 python_version = "3.7"

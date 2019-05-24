@@ -4,7 +4,7 @@ Generate covers collage from albums listened by a lastfm user.
 
 This utility needs a valid config file with your lastfm API keys (get them at https://www.last.fm/api) in ~/.config/lastfm_cg/config.ini (see config_sample.ini for an example).
 
-It also cache the image file requested thanks to the requests-cache library. If you don't want the script to create an sqlite file in your .config/lastfm_cg/ folder, you will have to launch the script with the -d/--disable_cache flag.
+It also cache the image file requested thanks to the requests-cache library. If you don't want the script to create an sqlite file in your ~/.local/share/lastfm_cg/ folder, you will have to launch the script with the -d/--disable_cache flag.
 
 ## Installation
 
