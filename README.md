@@ -6,6 +6,15 @@ This utility needs a valid config file with your lastfm API keys (get them at ht
 
 It also cache the image file requested thanks to the requests-cache library. If you don't want the script to create an sqlite file in your ~/.local/share/lastfm_cg/ folder, you will have to launch the script with the -d/--disable_cache flag.
 
+## Requirements
+
+- pylast
+- numpy
+- pillow
+- requests
+- requests-cache
+- tqdm
+
 ## Installation
 
 ```
@@ -30,7 +39,28 @@ Show the help and the available options.
 lastfm_cg -h
 ```
 
-Generate a collage for the user USER of the size 5x5 for the last 7 days (default values).
+```
+usage: lastfm_cg [-h] [--debug] [--timeframe TIMEFRAME] [--rows ROWS]
+                 [--columns COLUMNS] [--username USERNAME] [-d]
+
+Create lastfm album collage for an user
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --debug               Display debugging information
+  --timeframe TIMEFRAME, -t TIMEFRAME
+                        Timeframe (Accepted values : 7day, 1month, 3month,
+                        6month, 12month, overall. Default : 7day).
+  --rows ROWS, -r ROWS  Number of rows (Maximum value : 31. Default : 5).
+  --columns COLUMNS, -c COLUMNS
+                        Number of columns (Maximum value : 31. Default :
+                        number of rows).
+  --username USERNAME, -u USERNAME
+                        Name of the user
+  -d, --disable_cache   Disable the cache
+```
+ 
+ Generate a collage for the user USER of the size 5x5 for the last 7 days (default values).
 
 ```
 lastfm_cg -u USER

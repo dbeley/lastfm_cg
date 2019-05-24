@@ -20,5 +20,12 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Operating System :: POSIX :: Linux",
     ],
-    install_requires=["pylast", "numpy", "pillow", "requests"],
+    install_requires=[
+        "pylast",
+        "numpy",
+        "pillow",
+        "requests",
+        "requests-cache",
+        "tqdm",
+    ],
 )
