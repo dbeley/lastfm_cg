@@ -23,8 +23,6 @@ temps_debut = time.time()
 FORMAT = "%(levelname)s :: %(message)s"
 TIMEFRAME_VALUES = ["7day", "1month", "3month", "6month", "12month", "overall"]
 
-MAX_ROW_VALUE = 31
-
 
 def lastfmconnect():
     # Lastfm config file parsing
@@ -84,16 +82,17 @@ def main():
         args.columns = args.rows
 
     # cache for python-requests
-    cache_folder = os.path.expanduser("~/.config/lastfm_cg/")
-    if not os.path.isfile(cache_folder + "lastfm_cg_cache.sqlite"):
-        original_folder = os.getcwd()
-        os.chdir(cache_folder)
-        requests_cache.install_cache("lastfm_cg_cache")
-        os.chdir(original_folder)
-    else:
-        requests_cache.configure(
-            os.path.expanduser("~/.config/lastfm_cg/lastfm_cg_cache")
-        )
+    if not args.disable_cache:
+        cache_folder = os.path.expanduser("~/.config/lastfm_cg/")
+        if not os.path.isfile(cache_folder + "lastfm_cg_cache.sqlite"):
+            original_folder = os.getcwd()
+            os.chdir(cache_folder)
+            requests_cache.install_cache("lastfm_cg_cache")
+            os.chdir(original_folder)
+        else:
+            requests_cache.configure(
+                os.path.expanduser("~/.config/lastfm_cg/lastfm_cg_cache")
+            )
 
     if args.username:
         user = network.get_user(args.username)
@@ -103,29 +102,35 @@ def main():
 
     if args.timeframe not in TIMEFRAME_VALUES:
         logger.error(
-            "Incorrect value for timeframe. Accepted values : %s",
+            "Incorrect value %s for timeframe. Accepted values : %s",
+            args.columns,
             TIMEFRAME_VALUES,
         )
-    if args.rows > MAX_ROW_VALUE or not isinstance(args.rows, int):
+        exit()
+    if not isinstance(args.rows, int):
         logger.error(
-            "Incorrect value for number of rows.\
-                Max value : %s",
+            "Incorrect value %s for number of rows.",
+            args.columns,
             MAX_ROW_VALUE,
         )
-    if args.columns > MAX_ROW_VALUE or not isinstance(args.columns, int):
+        exit()
+    if not isinstance(args.columns, int):
         logger.error(
-            "Incorrect value for number of columns.\
-                Max value : %s",
+            "Incorrect value %s for number of columns.",
+            args.columns,
             MAX_ROW_VALUE,
         )
+        exit()
+    if args.columns * args.rows > 1000:
+        logger.error(
+            "Can't extract more than 1000 albums. Choose smaller number of rows/columns."
+        )
+        exit()
 
     try:
         top_albums = user.get_top_albums(
-            # period=args.timeframe, limit=args.rows ** 2
-            period=args.timeframe,
-            limit=args.rows * args.columns,
+            period=args.timeframe, limit=args.rows * args.columns
         )
-        # if len(top_albums) != args.rows ** 2:
         if len(top_albums) != args.rows * args.columns:
             logger.error("Not enough albums. Choose a lower row value.")
             exit()
@@ -139,7 +144,6 @@ def main():
                 list_covers.append(album.item.get_cover_image())
             except Exception as e:
                 logger.warning("%s : %s", album.item, e)
-        # list_covers = [album.item.get_cover_image() for album in top_albums]
         list_covers = [x for x in list_covers if x is not None]
         logger.debug("len list_covers : %s", len(list_covers))
 
@@ -151,8 +155,13 @@ def main():
         list_comb = []
         for img in chunks(imgs, args.columns):
             list_arrays = [np.asarray(i.resize(min_shape)) for i in img]
-            while len(list_arrays) < args.rows:
-                logger.debug("Missing album cover. Creating empty square.")
+            logger.debug("len list_arrays : %s", list_arrays)
+            i = 0
+            while len(list_arrays) < args.columns:
+                i += 1
+                logger.debug(
+                    "Missing album cover. Creating empty square %s.", i
+                )
                 list_arrays.append(
                     np.asarray(
                         np.zeros(
@@ -213,6 +222,14 @@ def parse_args():
         type=int,
     )
     parser.add_argument("--username", "-u", help="Name of the user", type=str)
+    parser.add_argument(
+        "-d",
+        "--disable_cache",
+        help="Disable the cache",
+        dest="disable_cache",
+        action="store_true",
+    )
+    parser.set_defaults(disable_cache=False)
     args = parser.parse_args()
 
     logging.basicConfig(level=args.loglevel, format=FORMAT)
