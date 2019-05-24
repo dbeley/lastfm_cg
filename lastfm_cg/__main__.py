@@ -186,9 +186,7 @@ def main():
         imgs_comb = np.vstack(list_comb_arrays)
         imgs_comb = Image.fromarray(imgs_comb)
 
-        export_filename = (
-            f"{args.timeframe}_{args.username}_" f"{int(time.time())}.png"
-        )
+        export_filename = f"{args.timeframe}_{args.username}_{args.columns*args.rows:004}_{int(time.time())}.png"
         imgs_comb.save(export_filename)
     except Exception as e:
         logger.error(e)
