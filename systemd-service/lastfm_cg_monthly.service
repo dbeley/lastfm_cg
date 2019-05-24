@@ -1,0 +1,11 @@
+[Unit]
+Description=lastfm_cg_monthly.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Documents/lastfm_cg/Exports
+# With pipenv
+ExecStart=%h/Documents/lastfm_cg/.venv/bin/lastfm_cg -u diyod -t 1month
+
+[Install]
+WantedBy=multi-user.target

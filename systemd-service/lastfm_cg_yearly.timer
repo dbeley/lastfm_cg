@@ -1,8 +1,8 @@
 [Unit]
-Description=lastfm_cg.timer
+Description=lastfm_cg_yearly.timer
 
 [Timer]
-OnCalendar=weekly
+OnCalendar=yearly
 Persistent=true
 
 [Install]

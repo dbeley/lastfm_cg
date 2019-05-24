@@ -1,5 +1,5 @@
 [Unit]
-Description=lastfm_cg.service
+Description=lastfm_cg_weekly.service
 
 [Service]
 Type=oneshot

@@ -1,0 +1,9 @@
+[Unit]
+Description=lastfm_cg_weekly.timer
+
+[Timer]
+OnCalendar=weekly
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,9 @@
+[Unit]
+Description=lastfm_cg_semiannually.timer
+
+[Timer]
+OnCalendar=semiannually
+Persistent=true
+
+[Install]
+WantedBy=timers.target

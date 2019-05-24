@@ -1,0 +1,9 @@
+[Unit]
+Description=lastfm_cg_monthly.timer
+
+[Timer]
+OnCalendar=monthly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
