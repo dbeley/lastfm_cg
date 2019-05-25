@@ -6,6 +6,8 @@ This utility needs a valid config file with your lastfm API keys (get them at ht
 
 It also cache the image file requested thanks to the requests-cache library. If you don't want the script to create an sqlite file in your ~/.local/share/lastfm_cg/ folder, you will have to launch the script with the -d/--disable_cache flag.
 
+
+
 ## Requirements
 
 - pylast
@@ -56,7 +58,7 @@ optional arguments:
                         Number of columns (Maximum value : 31. Default :
                         number of rows).
   --username USERNAME, -u USERNAME
-                        Name of the user
+                        Usernames to extract (separated by comma)
   -d, --disable_cache   Disable the cache
 ```
  
@@ -67,9 +69,9 @@ lastfm_cg -u USER
 lastfm_cg -u USER -t 7day -r 5
 ```
 
-Generate a collage for the user USER of the size 3x30 for all its history.
+Generate collages for the users USER and USER2 of the size 3x30 for all their listening history.
 
 ```
-lastfm_cg -u USER -t overall -r 3 -c 30
-lastfm_cg --username USER --timeframe overall --rows 3 --columns 30
+lastfm_cg -u USER,USER2 -t overall -r 3 -c 30
+lastfm_cg --username USER,USER2 --timeframe overall --rows 3 --columns 30
 ```

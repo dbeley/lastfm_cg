@@ -98,7 +98,8 @@ def main():
     )
 
     if args.username:
-        user = network.get_user(args.username)
+        users = [x.strip() for x in args.username.split(",")]
+        # user = network.get_user(args.username)
     else:
         logger.error("Use the -u/--username flag to set an username.")
         exit()
@@ -130,67 +131,66 @@ def main():
         )
         exit()
 
-    try:
-        logger.info("Retrieving top albums.")
-        top_albums = user.get_top_albums(
-            period=args.timeframe, limit=args.rows * args.columns
-        )
-        if len(top_albums) != args.rows * args.columns:
-            logger.error(
-                "Not enough albums. Choose a lower rows/columns value or another timeframe."
+    for username in users:
+        user = network.get_user(username)
+        try:
+            logger.info("Retrieving top albums covers for %s.", username)
+            top_albums = user.get_top_albums(
+                period=args.timeframe, limit=args.rows * args.columns
             )
-            exit()
-        logger.debug("len top_albums : %s", len(top_albums))
-        list_covers = []
-        for index, album in enumerate(tqdm(top_albums, dynamic_ncols=True), 1):
-            try:
-                logger.debug(
-                    "Retrieving cover for album %s - %s", index, album.item
+            if len(top_albums) != args.rows * args.columns:
+                logger.error(
+                    "Not enough albums. Choose a lower rows/columns value or another timeframe."
                 )
-                list_covers.append(album.item.get_cover_image())
-            except Exception as e:
-                logger.warning("%s : %s", album.item, e)
-        list_covers = [x for x in list_covers if x is not None]
-        logger.debug("len list_covers : %s", len(list_covers))
+                exit()
+            logger.debug("len top_albums : %s", len(top_albums))
+            list_covers = []
+            for index, album in enumerate(
+                tqdm(top_albums, dynamic_ncols=True), 1
+            ):
+                try:
+                    logger.debug(
+                        "Retrieving cover for album %s - %s", index, album.item
+                    )
+                    url = album.item.get_cover_image()
+                    if url:
+                        list_covers.append(requests.get(url).content)
+                except Exception as e:
+                    logger.warning("%s : %s", album.item, e)
 
-        logger.info("Downloading cover images.")
-        list_responses = [
-            requests.get(url).content
-            for url in tqdm(list_covers, dynamic_ncols=True)
-        ]
-        imgs = [Image.open(BytesIO(i)) for i in list_responses]
+            imgs = [Image.open(BytesIO(i)) for i in list_covers]
 
-        min_shape = sorted([(np.sum(i.size), i.size) for i in imgs])[0][1]
+            min_shape = sorted([(np.sum(i.size), i.size) for i in imgs])[0][1]
 
-        logger.info("Creating image.")
-        list_comb = []
-        for img in chunks(imgs, args.columns):
-            list_arrays = [np.asarray(i.resize(min_shape)) for i in img]
-            logger.debug("len list_arrays : %s", list_arrays)
-            i = 0
-            while len(list_arrays) < args.columns:
-                i += 1
-                logger.debug(
-                    "Missing album cover. Creating empty square %s.", i
-                )
-                list_arrays.append(
-                    np.asarray(
-                        np.zeros(
-                            (min_shape[0], min_shape[1], 4), dtype=np.uint8
+            logger.info("Creating image.")
+            list_comb = []
+            for img in chunks(imgs, args.columns):
+                list_arrays = [np.asarray(i.resize(min_shape)) for i in img]
+                logger.debug("len list_arrays : %s", list_arrays)
+                i = 0
+                while len(list_arrays) < args.columns:
+                    i += 1
+                    logger.debug(
+                        "Missing album cover. Creating empty square %s.", i
+                    )
+                    list_arrays.append(
+                        np.asarray(
+                            np.zeros(
+                                (min_shape[0], min_shape[1], 4), dtype=np.uint8
+                            )
                         )
                     )
-                )
-            list_comb.append(np.hstack(list_arrays))
+                list_comb.append(np.hstack(list_arrays))
 
-        list_comb_arrays = [np.asarray(i) for i in list_comb]
-        imgs_comb = np.vstack(list_comb_arrays)
-        imgs_comb = Image.fromarray(imgs_comb)
+            list_comb_arrays = [np.asarray(i) for i in list_comb]
+            imgs_comb = np.vstack(list_comb_arrays)
+            imgs_comb = Image.fromarray(imgs_comb)
 
-        export_filename = f"{args.timeframe}_{args.username}_{args.columns*args.rows:004}_{int(time.time())}.png"
-        imgs_comb.save(export_filename)
-    except Exception as e:
-        logger.error(e)
-        exit()
+            export_filename = f"{args.timeframe}_{username}_{args.columns*args.rows:004}_{int(time.time())}.png"
+            imgs_comb.save(export_filename)
+        except Exception as e:
+            logger.error(e)
+            exit()
 
     logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
 
@@ -230,7 +230,12 @@ def parse_args():
         help="Number of columns (Maximum value : 31. Default : number of rows).",
         type=int,
     )
-    parser.add_argument("--username", "-u", help="Name of the user", type=str)
+    parser.add_argument(
+        "--username",
+        "-u",
+        help="Usernames to extract (separated by comma)",
+        type=str,
+    )
     parser.add_argument(
         "-d",
         "--disable_cache",

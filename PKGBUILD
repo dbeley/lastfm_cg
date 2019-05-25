@@ -1,6 +1,6 @@
 # Maintainer: David Beley <dbeley@protonmail.com>
 pkgname=lastfm_cg-git
-pkgver=1.2.1
+pkgver=1.3
 pkgrel=1
 provides=("${pkgname%-git}")
 conflicts=("${pkgname%-git}")
@@ -15,6 +15,7 @@ depends=(
         'python-numpy'
         'python-pylast'
         'python-requests'
+        'python-requests-cache'
         )
 source=("git+https://github.com/dbeley/${pkgname%-git}")
 md5sums=("SKIP")
