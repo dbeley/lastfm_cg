@@ -1,6 +1,6 @@
 # lastfm_cg : lastfm collage generator
 
-<a href="docs/1month_2x3.png"><img src="docs/1month_2x3.png" width="300" height="200"/></a>
+<a href="docs/1month_2x3.png"><img src="docs/1month_2x3.png" width="390" height="260"/></a>
 
 Generate covers collage from albums listened by a lastfm user.
 
