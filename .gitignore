@@ -1,5 +1,5 @@
 *.egg-info/
-*.png
+/*.png
 *.sqlite
 .venv/
 Exports/
