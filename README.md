@@ -1,11 +1,12 @@
 # lastfm_cg : lastfm collage generator
 
+<a href="docs/1month_2x3.png"><img src="docs/1month_2x3.png" width="300" height="200"/></a>
+
 Generate covers collage from albums listened by a lastfm user.
 
 This utility needs a valid config file with your lastfm API keys (get them at https://www.last.fm/api) in ~/.config/lastfm_cg/config.ini (see config_sample.ini for an example).
 
 It also cache the image file requested thanks to the requests-cache library. If you don't want the script to create an sqlite file in your ~/.local/share/lastfm_cg/ folder, you will have to launch the script with the -d/--disable_cache flag.
-
 
 
 ## Requirements
@@ -75,3 +76,7 @@ Generate collages for the users USER and USER2 of the size 3x30 for all their li
 lastfm_cg -u USER,USER2 -t overall -r 3 -c 30
 lastfm_cg --username USER,USER2 --timeframe overall --rows 3 --columns 30
 ```
+
+## Samples Results
+
+<a href="docs/overall_5x8.png"><img src="docs/overall_5x8.png" width="800" height="500"/></a>
