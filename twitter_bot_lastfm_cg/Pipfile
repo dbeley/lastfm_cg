@@ -9,6 +9,7 @@ verify_ssl = true
 tweepy = "*"
 pillow = "*"
 twitter-bot-lastfm-cg = {editable = true,path = "."}
+e1839a8 = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"
