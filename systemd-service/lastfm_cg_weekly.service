@@ -6,8 +6,6 @@ Type=oneshot
 WorkingDirectory=%h/Documents/lastfm_cg/Exports
 # With pipenv
 ExecStart=%h/Documents/lastfm_cg/.venv/bin/lastfm_cg -u diyod
-ExecStart=%h/Documents/lastfm_cg/.venv/bin/lastfm_cg -u diyod -c 8 -r 5
-ExecStart=%h/Documents/lastfm_cg/.venv/bin/lastfm_cg -u diyod -c 25 -r 15
 
 [Install]
 WantedBy=multi-user.target
