@@ -1,5 +1,5 @@
 [Unit]
-Description=lastfm_cg_weekly.timer
+Description=twitter_bot_lastfm_cg_weekly.timer
 
 [Timer]
 OnCalendar=*-*-* 9:00:00

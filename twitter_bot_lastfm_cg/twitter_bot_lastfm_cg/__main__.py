@@ -7,11 +7,7 @@ from PIL import Image
 from pathlib import Path
 
 logger = logging.getLogger()
-# logging.getLogger("requests").setLevel(logging.CRITICAL)
-# logging.getLogger("tweepy").setLevel(logging.CRITICAL)
-# logging.getLogger("oauthlib").setLevel(logging.CRITICAL)
 logging.getLogger("requests_oauthlib").setLevel(logging.CRITICAL)
-# logging.getLogger("urllib3").setLevel(logging.CRITICAL)
 config = configparser.ConfigParser()
 config.read("config.ini")
 begin_time = datetime.datetime.now()
@@ -64,22 +60,46 @@ def main():
             image_name = image.name.split("_")
             timeframe = image_name[0]
             if timeframe == "7day":
-                title = f"My most listened albums on #lastfm for week {begin_time.strftime('%U')} of {begin_time.strftime('%Y')}."
+                # dt = datetime.datetime.strptime(begin_time, "%d/%b/%Y")
+                start = begin_time - datetime.timedelta(
+                    days=begin_time.weekday()
+                )
+                time = start + datetime.timedelta(days=6)
+                # title = f"My most listened albums on #lastfm for week {begin_time.strftime('%U')} of {begin_time.strftime('%Y')}."
+                title = (
+                    f"My most listened albums on #lastfm for the week of {time.strftime('%B %d %Y')}\n"
+                    f"Made with https://github.com/dbeley/lastfm_cg"
+                )
                 logger.debug("timeframe : 7day")
             elif timeframe == "1month":
-                title = f"My most listened albums on #lastfm for {begin_time.strftime('%B %Y')}."
+                title = (
+                    f"My most listened albums on #lastfm for {begin_time.strftime('%B %Y')}.\n"
+                    f"Made with https://github.com/dbeley/lastfm_cg"
+                )
                 logger.debug("timeframe : 1month")
             elif timeframe == "3month":
-                title = f"My most listened albums on #lastfm for the last 3 months."
+                title = (
+                    f"My most listened albums on #lastfm for the last 3 months.\n"
+                    f"Made with https://github.com/dbeley/lastfm_cg"
+                )
                 logger.debug("timeframe : 3month")
             elif timeframe == "6month":
-                title = f"My most listened albums on #lastfm for the last 6 months."
+                title = (
+                    f"My most listened albums on #lastfm for the last 6 months.\n"
+                    f"Made with https://github.com/dbeley/lastfm_cg"
+                )
                 logger.debug("timeframe : 6month")
             elif timeframe == "12month":
-                title = f"My most listened albums on #lastfm for the last 12 months."
+                title = (
+                    f"My most listened albums on #lastfm for the last 12 months.\n"
+                    f"Made with https://github.com/dbeley/lastfm_cg"
+                )
                 logger.debug("timeframe : 12month")
             elif timeframe == "overall":
-                title = f"My most listened albums on #lastfm ever."
+                title = (
+                    f"My most listened albums on #lastfm ever.\n"
+                    f"Made with https://github.com/dbeley/lastfm_cg"
+                )
                 logger.debug("timeframe : overall")
 
             if str(image.absolute()) not in done_list:
@@ -87,9 +107,11 @@ def main():
                 logger.info("Image %s not already posted.", image.name)
                 if args.no_upload_twitter:
                     logger.info(
-                        """No posting mode activated.
-                        File : %s
-                        message : %s""",
+                        (
+                            "No posting mode activated.\n"
+                            "File : %s\n"
+                            "message : %s\n"
+                        ),
                         image.name,
                         title,
                     )
