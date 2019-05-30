@@ -1,0 +1,11 @@
+[Unit]
+Description=twitter_bot_lastfm_cg_monthly.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Documents/lastfm_cg/twitter_bot_lastfm_cg/
+# With pipenv
+ExecStart=%h/Documents/lastfm_cg/twitter_bot_lastfm_cg/.venv/bin/twitter_bot_lastfm_cg -d ../Exports
+
+[Install]
+WantedBy=multi-user.target
