@@ -67,38 +67,38 @@ def main():
                 time = start + datetime.timedelta(days=6)
                 # title = f"My most listened albums on #lastfm for week {begin_time.strftime('%U')} of {begin_time.strftime('%Y')}."
                 title = (
-                    f"My most listened albums on #lastfm for the week of {time.strftime('%B %d %Y')}\n"
-                    f"Made with https://github.com/dbeley/lastfm_cg"
+                    f"My most listened albums on #lastfm for the week of {time.strftime('%B %d %Y')}."
+                    # f"Made with https://github.com/dbeley/lastfm_cg"
                 )
                 logger.debug("timeframe : 7day")
             elif timeframe == "1month":
                 title = (
-                    f"My most listened albums on #lastfm for {begin_time.strftime('%B %Y')}.\n"
-                    f"Made with https://github.com/dbeley/lastfm_cg"
+                    f"My most listened albums on #lastfm for {begin_time.strftime('%B %Y')}."
+                    # f"Made with https://github.com/dbeley/lastfm_cg"
                 )
                 logger.debug("timeframe : 1month")
             elif timeframe == "3month":
                 title = (
-                    f"My most listened albums on #lastfm for the last 3 months.\n"
-                    f"Made with https://github.com/dbeley/lastfm_cg"
+                    f"My most listened albums on #lastfm for the last 3 months."
+                    # f"Made with https://github.com/dbeley/lastfm_cg"
                 )
                 logger.debug("timeframe : 3month")
             elif timeframe == "6month":
                 title = (
-                    f"My most listened albums on #lastfm for the last 6 months.\n"
-                    f"Made with https://github.com/dbeley/lastfm_cg"
+                    f"My most listened albums on #lastfm for the last 6 months."
+                    # f"Made with https://github.com/dbeley/lastfm_cg"
                 )
                 logger.debug("timeframe : 6month")
             elif timeframe == "12month":
                 title = (
-                    f"My most listened albums on #lastfm for the last 12 months.\n"
-                    f"Made with https://github.com/dbeley/lastfm_cg"
+                    f"My most listened albums on #lastfm for the last 12 months."
+                    # f"Made with https://github.com/dbeley/lastfm_cg"
                 )
                 logger.debug("timeframe : 12month")
             elif timeframe == "overall":
                 title = (
-                    f"My most listened albums on #lastfm ever.\n"
-                    f"Made with https://github.com/dbeley/lastfm_cg"
+                    f"My most listened albums on #lastfm ever."
+                    # f"Made with https://github.com/dbeley/lastfm_cg"
                 )
                 logger.debug("timeframe : overall")
 
