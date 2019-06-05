@@ -8,7 +8,7 @@ This utility needs a valid config file with your lastfm API keys (get them at ht
 
 It also cache the image file requested thanks to the requests-cache library. If you don't want the script to create an sqlite file in your ~/.local/share/lastfm_cg/ folder, you will have to launch the script with the -d/--disable_cache flag.
 
-A twitter bot is also supplied in the twitter_bot_lastfm_cg folder.
+A twitter bot and a mastodon post are also supplied.
 
 
 ## Requirements

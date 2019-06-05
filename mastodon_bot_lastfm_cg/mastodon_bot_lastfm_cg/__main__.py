@@ -18,17 +18,13 @@ def mastodonconnect():
         Mastodon.create_app(
             "mastodon_bot_lastfm_cg",
             api_base_url=config["mastodon"]["api_base_url"],
-            # api_base_url="https://mastodon.social",
-            # api_base_url="https://mamot.fr",
             to_file="mastodon_clientcred.secret",
         )
 
     if not Path("mastodon_usercred.secret").is_file():
         mastodon = Mastodon(
             client_id="mastodon_clientcred.secret",
-            api_base_url=config["mastodon"]["api_base_url"]
-            # api_base_url="https://mamot.fr",
-            # api_base_url="https://mastodon.social",
+            api_base_url=config["mastodon"]["api_base_url"],
         )
         mastodon.log_in(
             config["mastodon"]["login_email"],
