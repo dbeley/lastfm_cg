@@ -7,4 +7,6 @@ __pycache__/
 config.ini
 dist/
 tags
-twitter_bot_lastfm_cg/DONE.txt
+DONE.txt
+*.secret
+temp.png
