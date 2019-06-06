@@ -22,5 +22,5 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Operating System :: POSIX :: Linux",
     ],
-    install_requires=["tweepy", "pillow"],
+    install_requires=["tweepy", "pillow", "Mastodon.py"],
 )

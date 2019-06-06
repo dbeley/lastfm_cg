@@ -221,7 +221,7 @@ def parse_args():
     parser.add_argument(
         "--social_media",
         "-s",
-        help="Social media where the image will be posted (twitter or mastodon. Default = twitter).",
+        help="Social media where the image will be posted (twitter or mastodon. Default : twitter).",
         default="twitter",
         type=str,
     )

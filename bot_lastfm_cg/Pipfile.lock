@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c2208ff1077e0d6ad83352982579bb28ef561ead8013afaa83169fb5159cbc90"
+            "sha256": "1e0f6ea974b61eb7798e0f854a63348bb51af6fc504d1bbf72f86aca08af1ba5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -48,10 +48,6 @@
             ],
             "version": "==4.4.0"
         },
-        "e1839a8": {
-            "editable": true,
-            "path": "."
-        },
         "idna": {
             "hashes": [
                 "sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407",
@@ -59,11 +55,11 @@
             ],
             "version": "==2.8"
         },
-        "mastodon-py": {
+        "mastodon.py": {
             "hashes": [
-                "sha256:1864f0b8c66d02496a7399cfeabbbd66f2c869328e2253bc8095bfdafbfab65a"
+                "sha256:1864f0b8c66d02496a7399cfeabbbd66f2c869328e2253bc8095bfdafbfab65a",
+                "sha256:c1416f22637147f304b2c12832d20f1010f7391ac52c84d03d9675d30cd86c18"
             ],
-            "index": "pypi",
             "version": "==1.4.3"
         },
         "oauthlib": {
@@ -102,7 +98,6 @@
                 "sha256:de7aedc85918c2f887886442e50f52c1b93545606317956d65f342bd81cb4fc3",
                 "sha256:e6c0bbf8e277b74196e3140c35f9a1ae3eafd818f7f2d3a15819c49135d6c062"
             ],
-            "index": "pypi",
             "version": "==6.0.0"
         },
         "pysocks": {
@@ -160,12 +155,7 @@
                 "sha256:de56db37181e6ba2a375a7a81845ee6b2aee0e39a7bc8fb96a60c0370062f0a2",
                 "sha256:fe85a79f58a01dd335968523b91c5fce760e7fe78bf25a6e71c72204fe499d0b"
             ],
-            "index": "pypi",
             "version": "==3.7.0"
-        },
-        "twitter-bot-lastfm-cg": {
-            "editable": true,
-            "path": "."
         },
         "urllib3": {
             "hashes": [

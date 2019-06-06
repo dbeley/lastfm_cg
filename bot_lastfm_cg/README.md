@@ -4,11 +4,12 @@ Bot posting new lastfm_cg images found in a directory on twitter or mastodon.
 
 Use the systemd service in conjonction with lastfm_cg systemd services. Adjust the WorkingDirectory and ExecStart directive to match your configuration.
 
+The script needs a valid config file with twitter API keys (get them at https://developer.twitter.com ) and/or your mastodon account information in the same directory as the main script (see config_sample.ini for an example).
+
 ## Requirements
 
 - tweepy
 - Mastodon.py
-- valid config.ini file with api/account information in the script folder (see config_sample.ini for an example)
 
 ## Installation in a virtualenv (recommended)
 
@@ -43,5 +44,5 @@ optional arguments:
   --no_upload           Disable the upload. Use it for debugging
   --social_media SOCIAL_MEDIA, -s SOCIAL_MEDIA
                         Social media where the image will be posted (twitter
-                        or mastodon. Default = twitter).
+                        or mastodon. Default : twitter).
 ```
