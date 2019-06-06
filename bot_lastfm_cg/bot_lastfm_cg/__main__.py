@@ -65,12 +65,10 @@ def main():
     args = parse_args()
     social_media = args.social_media.lower()
     if args.no_upload:
-        logger.debug("No upload to social media.")
+        logger.debug("No upload mode activated.")
     else:
         if social_media not in SUPPORTED_SOCIAL_MEDIA:
-            logger.error(
-                "Social media %s not supported. Exiting.", social_media
-            )
+            logger.error("%s not supported. Exiting.", social_media)
             exit()
         elif social_media == "twitter":
             api = twitterconnect()
@@ -80,10 +78,10 @@ def main():
             done_filename = "DONE_mastodon.txt"
 
     if args.directory:
-        logger.debug("Using directory %s", args.directory)
+        logger.debug("Posting images from directory %s.", args.directory)
     else:
         args.directory = Path()
-        logger.debug("Using directory %s", args.directory)
+        logger.debug("Posting images from directory %s.", args.directory)
 
     image_list = Path(args.directory).glob("*.png")
 
@@ -92,10 +90,10 @@ def main():
             done_list = [x.strip() for x in f.readlines()]
     else:
         done_list = []
-    logger.info(done_list)
+    logger.debug(done_list)
 
     for image in sorted(image_list):
-        logger.debug("Image %s", image.name)
+        logger.debug("Image %s.", image.name)
         try:
             # won't work well if the lastfm username has an undersore in it
             image_name = image.name.split("_")
@@ -158,19 +156,19 @@ def main():
                 else:
                     try:
                         logger.info(
-                            "Uploading %s with message %s", image.name, title
+                            "Uploading %s with message %s.", image.name, title
                         )
                         tweet_image(api, image, title, social_media)
                         with open(done_filename, "a") as f:
                             f.write(f"{str(image.absolute())}\n")
                     except Exception as e:
-                        logger.error("Error uploading image : %s", e)
+                        logger.error("Error uploading image : %s.", e)
                         # can't upload original image, resizing until if fits
                         size = 1024, 1024
                         while True:
                             try:
                                 logger.info(
-                                    "Image too big. Trying resize at size %s",
+                                    "Image too big. Trying resize at size %s.",
                                     size[0],
                                 )
                                 im = Image.open(image)
@@ -188,7 +186,7 @@ def main():
                                 )
                                 break
                             except Exception as e:
-                                logger.error("Error uploading image : %s", e)
+                                logger.error("Error uploading image : %s.", e)
                                 size = int(size[0] / 1.25), int(size[1] / 1.25)
             else:
                 logger.info("Image %s already posted.", image.name)
@@ -198,7 +196,7 @@ def main():
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Bot posting images from lastfm_cg to social media services"
+        description="Bot posting images from lastfm_cg to twitter or mastodon."
     )
     parser.add_argument(
         "--debug",
@@ -221,9 +219,10 @@ def parse_args():
         action="store_true",
     )
     parser.add_argument(
-        "--social-media",
+        "--social_media",
         "-s",
         help="Social media where the image will be posted (twitter or mastodon. Default = twitter).",
+        default="twitter",
         type=str,
     )
     parser.set_defaults(no_upload=False)

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3d2e2bf06e03dbd9ff51337c14dd1d24a02f293ab60b6a8bbbab1ef6df5e42d6"
+            "sha256": "55899b67b5f02b10924973296999866337fc853151706670a8431b0ca82d2f1d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,6 +46,10 @@
             "version": "==2.8"
         },
         "lastfm-cg": {
+            "editable": true,
+            "path": "."
+        },
+        "mastodon-bot-lastfm-cg": {
             "editable": true,
             "path": "."
         },

@@ -139,39 +139,49 @@ def main():
             for index, album in enumerate(
                 tqdm(top_albums, dynamic_ncols=True), 1
             ):
-                try:
-                    logger.debug(
-                        "Retrieving cover for album %s - %s", index, album.item
-                    )
-                    nb_tries = 0
-                    while True:
-                        try:
-                            url = album.item.get_cover_image()
-                            break
-                        except Exception as e:
+                logger.debug(
+                    "Retrieving cover for album %s - %s", index, album.item
+                )
+                nb_tries = 0
+                url = None
+                img = None
+                while True:
+                    try:
+                        nb_tries += 1
+                        url = album.item.get_cover_image()
+                        break
+                    except Exception as e:
+                        logger.warning(
+                            "Error retrieving cover url for %s - %s : %s. Retrying.",
+                            index,
+                            album.item,
+                            e,
+                        )
+                        if nb_tries > 4:
                             logger.warning(
-                                "Error retrieving cover url for %s - %s : %s",
+                                "Couldn't retrieve cover url for %s -%s after 4 tries.",
                                 index,
                                 album.item,
-                                e,
                             )
-                            if nb_tries > 4:
-                                break
+                            break
 
-                    if url:
-                        while True:
-                            try:
-                                img = requests.get(url).content
-                                break
-                            except Exception as e:
-                                logger.warning(
-                                    "Error getting image %s : %s. Retrying.",
-                                    url,
-                                    e,
-                                )
-                        list_covers.append(img)
-                except Exception as e:
-                    logger.warning("%s : %s", album.item, e)
+                if url:
+                    img = requests.get(url).content
+                    # while True:
+                    #     try:
+                    #         img = requests.get(url).content
+                    #         break
+                    #     except Exception as e:
+                    #         logger.warning(
+                    #             "Error getting image %s : %s. Retrying.",
+                    #             url,
+                    #             e,
+                    #         )
+                    list_covers.append(img)
+                else:
+                    logger.warning(
+                        "No cover image found for %s - %s", index, album.item
+                    )
 
             imgs = [Image.open(BytesIO(i)) for i in list_covers]
 

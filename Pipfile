@@ -15,6 +15,7 @@ lastfm-cg = {editable = true,path = "."}
 requests-cache = "*"
 tqdm = "*"
 bot-lastfm-cg = {editable = true,path = "."}
+mastodon-bot-lastfm-cg = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"
