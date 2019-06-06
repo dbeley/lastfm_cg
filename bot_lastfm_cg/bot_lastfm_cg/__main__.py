@@ -2,6 +2,7 @@ import logging
 import configparser
 import datetime
 import argparse
+import tweepy
 from PIL import Image
 from pathlib import Path
 from mastodon import Mastodon
@@ -11,6 +12,27 @@ logging.getLogger("requests_oauthlib").setLevel(logging.CRITICAL)
 config = configparser.ConfigParser()
 config.read("config.ini")
 begin_time = datetime.datetime.now()
+SUPPORTED_SOCIAL_MEDIA = ["twitter", "mastodon"]
+
+
+def twitterconnect():
+    consumer_key = config["twitter"]["consumer_key"]
+    secret_key = config["twitter"]["secret_key"]
+    access_token = config["twitter"]["access_token"]
+    access_token_secret = config["twitter"]["access_token_secret"]
+
+    auth = tweepy.OAuthHandler(consumer_key, secret_key)
+    auth.set_access_token(access_token, access_token_secret)
+    return tweepy.API(auth)
+
+
+def tweet_image(api, filename, title, social_media):
+    if social_media == "twitter":
+        pic = api.media_upload(str(filename))
+        api.update_status(status=title, media_ids=[pic.media_id_string])
+    elif social_media == "mastodon":
+        id_media = api.media_post(str(filename), "image/png")
+        api.status_post(title, media_ids=[id_media])
 
 
 def mastodonconnect():
@@ -39,18 +61,23 @@ def mastodonconnect():
     return mastodon
 
 
-def toot_image(api, filename, title):
-    id_media = api.media_post(str(filename), "image/png")
-    api.status_post(title, media_ids=[id_media])
-
-
 def main():
     args = parse_args()
-    if args.no_upload_mastodon:
-        logger.debug("No upload to mastodon.")
+    social_media = args.social_media.lower()
+    if args.no_upload:
+        logger.debug("No upload to social media.")
     else:
-        logger.debug("Upload to mastodon.")
-        api = mastodonconnect()
+        if social_media not in SUPPORTED_SOCIAL_MEDIA:
+            logger.error(
+                "Social media %s not supported. Exiting.", social_media
+            )
+            exit()
+        elif social_media == "twitter":
+            api = twitterconnect()
+            done_filename = "DONE_twitter.txt"
+        elif social_media == "mastodon":
+            api = mastodonconnect()
+            done_filename = "DONE_mastodon.txt"
 
     if args.directory:
         logger.debug("Using directory %s", args.directory)
@@ -60,7 +87,6 @@ def main():
 
     image_list = Path(args.directory).glob("*.png")
 
-    done_filename = "DONE.txt"
     if Path(done_filename).is_file():
         with open(done_filename, "r") as f:
             done_list = [x.strip() for x in f.readlines()]
@@ -118,9 +144,8 @@ def main():
                 logger.debug("timeframe : overall")
 
             if str(image.absolute()) not in done_list:
-                # uploading to mastodon:
                 logger.info("Image %s not already posted.", image.name)
-                if args.no_upload_mastodon:
+                if args.no_upload:
                     logger.info(
                         (
                             "No posting mode activated.\n"
@@ -135,7 +160,7 @@ def main():
                         logger.info(
                             "Uploading %s with message %s", image.name, title
                         )
-                        toot_image(api, image, title)
+                        tweet_image(api, image, title, social_media)
                         with open(done_filename, "a") as f:
                             f.write(f"{str(image.absolute())}\n")
                     except Exception as e:
@@ -153,7 +178,9 @@ def main():
                                 im.save("temp.png", "PNG")
                                 converted_image = Path("temp.png")
                                 logger.info("Retrying upload.")
-                                toot_image(api, converted_image, title)
+                                tweet_image(
+                                    api, converted_image, title, social_media
+                                )
                                 with open(done_filename, "a") as f:
                                     f.write(f"{str(image.absolute())}\n")
                                 logger.info(
@@ -171,7 +198,7 @@ def main():
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Mastodon bot posting images from lastfm_cg"
+        description="Bot posting images from lastfm_cg to social media services"
     )
     parser.add_argument(
         "--debug",
@@ -188,12 +215,18 @@ def parse_args():
         type=str,
     )
     parser.add_argument(
-        "--no_upload_mastodon",
-        help="Disable the mastodon upload. Use it for debugging",
-        dest="no_upload_mastodon",
+        "--no_upload",
+        help="Disable the upload. Use it for debugging",
+        dest="no_upload",
         action="store_true",
     )
-    parser.set_defaults(no_upload_mastodon=False)
+    parser.add_argument(
+        "--social-media",
+        "-s",
+        help="Social media where the image will be posted (twitter or mastodon. Default = twitter).",
+        type=str,
+    )
+    parser.set_defaults(no_upload=False)
     args = parser.parse_args()
     logging.basicConfig(level=args.loglevel)
     return args

@@ -1,13 +1,13 @@
-# twitter_bot_lastfm_cg
+# bot_lastfm_cg
 
-Twitter bot posting new lastfm_cg images found in a directory.
+Bot posting new lastfm_cg images found in a directory on social media.
 
 Use the systemd service in conjonction with lastfm_cg systemd services. Adjust the WorkingDirectory and ExecStart directive to match your configuration.
 
 ## Requirements
 
 - tweepy
-- valid config.ini file with twitter api information in the script folder (see config_sample.ini for an example)
+- valid config.ini file with api information in the script folder (see config_sample.ini for an example)
 
 ## Installation in a virtualenv (recommended)
 
@@ -18,17 +18,17 @@ pipenv install '-e .'
 ## Usage
 
 ```
-twitter_bot_lastfm_cg.py
+bot_lastfm_cg.py
 ```
 
 ## Help
 
 ```
-twitter_bot_lastfm_cg.py -h
+bot_lastfm_cg.py -h
 ```
 
 ```
-usage: twitter_bot_lastfm_cg [-h] [--debug] [-d DIRECTORY]
+usage: bot_lastfm_cg [-h] [--debug] [-d DIRECTORY]
                              [--no_upload_twitter]
 
 Twitter bot posting images from lastfm_cg

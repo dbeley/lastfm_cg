@@ -31,8 +31,8 @@ def lastfmconnect():
     try:
         config = configparser.ConfigParser()
         config.read(user_config_dir + "config.ini")
-        API_KEY = config["lastfm"]["API_KEY"]
-        API_SECRET = config["lastfm"]["API_SECRET"]
+        api_key = config["lastfm"]["api_key"]
+        api_secret = config["lastfm"]["api_secret"]
     except Exception as e:
         logger.error(
             (
@@ -52,8 +52,8 @@ def lastfmconnect():
         if not os.path.isfile(user_config_dir + "config.ini"):
             sample_config = (
                 "[lastfm]\n"
-                "API_KEY=API_KEY_HERE\n"
-                "API_SECRET=API_SECRET_HERE\n"
+                "api_key=api_key_here\n"
+                "api_secret=api_secret_here\n"
             )
             with open(user_config_dir + "config.ini", "w") as f:
                 f.write(sample_config)
@@ -66,7 +66,7 @@ def lastfmconnect():
                 )
             )
         exit()
-    network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
+    network = pylast.LastFMNetwork(api_key=api_key, api_secret=api_secret)
     return network
 
 
@@ -111,18 +111,10 @@ def main():
         )
         exit()
     if not isinstance(args.rows, int):
-        logger.error(
-            "Incorrect value %s for number of rows.",
-            args.columns,
-            MAX_ROW_VALUE,
-        )
+        logger.error("Incorrect value %s for number of rows.", args.columns)
         exit()
     if not isinstance(args.columns, int):
-        logger.error(
-            "Incorrect value %s for number of columns.",
-            args.columns,
-            MAX_ROW_VALUE,
-        )
+        logger.error("Incorrect value %s for number of columns.", args.columns)
         exit()
     if args.columns * args.rows > 1000:
         logger.error(
@@ -139,7 +131,7 @@ def main():
             )
             if len(top_albums) != args.rows * args.columns:
                 logger.error(
-                    "Not enough albums. Choose a lower rows/columns value or another timeframe."
+                    "Not enough albums played in the selected timeframe. Choose a lower rows/columns value or another timeframe."
                 )
                 exit()
             logger.debug("len top_albums : %s", len(top_albums))
@@ -151,9 +143,33 @@ def main():
                     logger.debug(
                         "Retrieving cover for album %s - %s", index, album.item
                     )
-                    url = album.item.get_cover_image()
+                    nb_tries = 0
+                    while True:
+                        try:
+                            url = album.item.get_cover_image()
+                            break
+                        except Exception as e:
+                            logger.warning(
+                                "Error retrieving cover url for %s - %s : %s",
+                                index,
+                                album.item,
+                                e,
+                            )
+                            if nb_tries > 4:
+                                break
+
                     if url:
-                        list_covers.append(requests.get(url).content)
+                        while True:
+                            try:
+                                img = requests.get(url).content
+                                break
+                            except Exception as e:
+                                logger.warning(
+                                    "Error getting image %s : %s. Retrying.",
+                                    url,
+                                    e,
+                                )
+                        list_covers.append(img)
                 except Exception as e:
                     logger.warning("%s : %s", album.item, e)
 
@@ -165,7 +181,6 @@ def main():
             list_comb = []
             for img in chunks(imgs, args.columns):
                 list_arrays = [np.asarray(i.resize(min_shape)) for i in img]
-                logger.debug("len list_arrays : %s", list_arrays)
                 i = 0
                 while len(list_arrays) < args.columns:
                     i += 1
@@ -219,14 +234,14 @@ def parse_args():
     parser.add_argument(
         "--rows",
         "-r",
-        help="Number of rows (Maximum value : 31. Default : 5).",
+        help="Number of rows (Default : 5).",
         type=int,
         default=5,
     )
     parser.add_argument(
         "--columns",
         "-c",
-        help="Number of columns (Maximum value : 31. Default : number of rows).",
+        help="Number of columns (Default : number of rows).",
         type=int,
     )
     parser.add_argument(
