@@ -166,7 +166,7 @@ def main():
                         )
                         if nb_tries > 4:
                             logger.warning(
-                                "Couldn't retrieve cover url for %s -%s after "
+                                "Couldn't retrieve cover url for %s - %s after "
                                 "4 tries.",
                                 index,
                                 album.item,
