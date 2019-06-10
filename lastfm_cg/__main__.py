@@ -118,24 +118,30 @@ def main():
         exit()
     if args.columns * args.rows > 1000:
         logger.error(
-            "Can't extract more than 1000 albums. Choose smaller number of rows/columns."
+            "Can't extract more than 1000 albums. "
+            "Choose smaller number of rows/columns."
         )
         exit()
 
     for username in users:
         user = network.get_user(username)
-        try:
+        nb_failed = 0
+        list_covers = []
+        while True:
             logger.info("Retrieving top albums covers for %s.", username)
             top_albums = user.get_top_albums(
-                period=args.timeframe, limit=args.rows * args.columns
+                period=args.timeframe,
+                limit=(args.rows * args.columns) + nb_failed,
             )
-            if len(top_albums) != args.rows * args.columns:
+            if len(top_albums) != (args.rows * args.columns) + nb_failed:
                 logger.error(
-                    "Not enough albums played in the selected timeframe. Choose a lower rows/columns value or another timeframe."
+                    "Not enough albums played in the selected timeframe. "
+                    "Choose a lower rows/columns value or another timeframe."
                 )
                 exit()
-            logger.debug("len top_albums : %s", len(top_albums))
-            list_covers = []
+            top_albums = top_albums[-nb_failed:]
+            logger.debug("len(top_albums) : %s", len(top_albums))
+            nb_failed = 0
             for index, album in enumerate(
                 tqdm(top_albums, dynamic_ncols=True), 1
             ):
@@ -152,69 +158,61 @@ def main():
                         break
                     except Exception as e:
                         logger.warning(
-                            "Error retrieving cover url for %s - %s : %s. Retrying.",
+                            "Error retrieving cover url for %s - %s : %s. "
+                            "Retrying.",
                             index,
                             album.item,
                             e,
                         )
                         if nb_tries > 4:
                             logger.warning(
-                                "Couldn't retrieve cover url for %s -%s after 4 tries.",
+                                "Couldn't retrieve cover url for %s -%s after "
+                                "4 tries.",
                                 index,
                                 album.item,
                             )
+                            nb_failed += 1
+                            logger.debug("nb_failed : %s", nb_failed)
                             break
-
                 if url:
                     img = requests.get(url).content
-                    # while True:
-                    #     try:
-                    #         img = requests.get(url).content
-                    #         break
-                    #     except Exception as e:
-                    #         logger.warning(
-                    #             "Error getting image %s : %s. Retrying.",
-                    #             url,
-                    #             e,
-                    #         )
                     list_covers.append(img)
                 else:
                     logger.warning(
                         "No cover image found for %s - %s", index, album.item
                     )
+            if nb_failed == 0:
+                break
 
-            imgs = [Image.open(BytesIO(i)) for i in list_covers]
+        imgs = [Image.open(BytesIO(i)) for i in list_covers]
 
-            min_shape = sorted([(np.sum(i.size), i.size) for i in imgs])[0][1]
+        min_shape = sorted([(np.sum(i.size), i.size) for i in imgs])[0][1]
 
-            logger.info("Creating image.")
-            list_comb = []
-            for img in chunks(imgs, args.columns):
-                list_arrays = [np.asarray(i.resize(min_shape)) for i in img]
-                i = 0
-                while len(list_arrays) < args.columns:
-                    i += 1
-                    logger.debug(
-                        "Missing album cover. Creating empty square %s.", i
-                    )
-                    list_arrays.append(
-                        np.asarray(
-                            np.zeros(
-                                (min_shape[0], min_shape[1], 4), dtype=np.uint8
-                            )
+        logger.info("Creating image.")
+        list_comb = []
+        for img in chunks(imgs, args.columns):
+            list_arrays = [np.asarray(i.resize(min_shape)) for i in img]
+            i = 0
+            while len(list_arrays) < args.columns:
+                i += 1
+                logger.debug(
+                    "Missing album cover. Creating empty square %s.", i
+                )
+                list_arrays.append(
+                    np.asarray(
+                        np.zeros(
+                            (min_shape[0], min_shape[1], 4), dtype=np.uint8
                         )
                     )
-                list_comb.append(np.hstack(list_arrays))
+                )
+            list_comb.append(np.hstack(list_arrays))
 
-            list_comb_arrays = [np.asarray(i) for i in list_comb]
-            imgs_comb = np.vstack(list_comb_arrays)
-            imgs_comb = Image.fromarray(imgs_comb)
+        list_comb_arrays = [np.asarray(i) for i in list_comb]
+        imgs_comb = np.vstack(list_comb_arrays)
+        imgs_comb = Image.fromarray(imgs_comb)
 
-            export_filename = f"{args.timeframe}_{username}_{args.columns*args.rows:004}_{int(time.time())}.png"
-            imgs_comb.save(export_filename)
-        except Exception as e:
-            logger.error(e)
-            exit()
+        export_filename = f"{args.timeframe}_{username}_{args.columns*args.rows:004}_{int(time.time())}.png"
+        imgs_comb.save(export_filename)
 
     logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
 
