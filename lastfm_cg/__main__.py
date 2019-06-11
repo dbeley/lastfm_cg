@@ -116,24 +116,35 @@ def main():
     if not isinstance(args.columns, int):
         logger.error("Incorrect value %s for number of columns.", args.columns)
         exit()
-    if args.columns * args.rows > 1000:
-        logger.error(
-            "Can't extract more than 1000 albums. "
-            "Choose smaller number of rows/columns."
-        )
-        exit()
 
     for username in users:
         user = network.get_user(username)
         nb_failed = 0
+        nb_failed_global = 0
         list_covers = []
         while True:
-            logger.info("Retrieving top albums covers for %s.", username)
-            top_albums = user.get_top_albums(
-                period=args.timeframe,
-                limit=(args.rows * args.columns) + nb_failed,
+            # keep track of all the failed ones, in case several iteration
+            nb_failed_global += nb_failed
+            limit = (args.rows * args.columns) + nb_failed_global
+            if nb_failed > 0:
+                logger.info(
+                    "Some covers weren't properly extracted. "
+                    "Adding %s albums to the grid.",
+                    nb_failed,
+                )
+            logger.info(
+                "Retrieving top %s albums covers for %s.", limit, username
             )
-            if len(top_albums) != (args.rows * args.columns) + nb_failed:
+            if limit > 1000:
+                logger.error(
+                    "Can't extract more than 1000 albums. "
+                    "Choose smaller number of rows/columns."
+                )
+                exit()
+            top_albums = user.get_top_albums(
+                period=args.timeframe, limit=limit
+            )
+            if len(top_albums) != limit:
                 logger.error(
                     "Not enough albums played in the selected timeframe. "
                     "Choose a lower rows/columns value or another timeframe."
@@ -176,12 +187,17 @@ def main():
                             )
                             break
                 if url:
-                    img = requests.get(url).content
-                    if not img:
-                        # link returned by get_cover_image() doesn't work
-                        nb_failed += 1
+                    if url.endswith(".png"):
+                        img = requests.get(url).content
+                        if img:
+                            list_covers.append(img)
+                        else:
+                            # link returned by get_cover_image() doesn't work
+                            nb_failed += 1
                     else:
-                        list_covers.append(img)
+                        logger.warning("Wrong filetype for %s", url)
+                        # url doesn't host a png image
+                        nb_failed += 1
                 else:
                     # no url returned by get_cover_image()
                     nb_failed += 1
@@ -198,6 +214,7 @@ def main():
         logger.info("Creating image.")
         list_comb = []
         for img in chunks(imgs, args.columns):
+            # list of rows of x columns
             list_arrays = [np.asarray(i.resize(min_shape)) for i in img]
             i = 0
             while len(list_arrays) < args.columns:
@@ -214,6 +231,7 @@ def main():
                 )
             list_comb.append(np.hstack(list_arrays))
 
+        # combine rows to create image
         list_comb_arrays = [np.asarray(i) for i in list_comb]
         imgs_comb = np.vstack(list_comb_arrays)
         imgs_comb = Image.fromarray(imgs_comb)
