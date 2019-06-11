@@ -85,7 +85,7 @@ def main():
 
     image_list = Path(args.directory).glob("*.png")
 
-    if Path(done_filename).is_file():
+    if not args.no_upload and Path(done_filename).is_file():
         with open(done_filename, "r") as f:
             done_list = [x.strip() for x in f.readlines()]
     else:
@@ -99,14 +99,11 @@ def main():
             image_name = image.name.split("_")
             timeframe = image_name[0]
             if timeframe == "7day":
-                # dt = datetime.datetime.strptime(begin_time, "%d/%b/%Y")
                 start = begin_time - datetime.timedelta(
                     days=begin_time.weekday()
                 )
-                time = start + datetime.timedelta(days=6)
-                # title = f"My most listened albums on #lastfm for week {begin_time.strftime('%U')} of {begin_time.strftime('%Y')}."
                 title = (
-                    f"My most listened albums on #lastfm for the week of {time.strftime('%B %d %Y')}."
+                    f"My most listened albums on #lastfm for the week of {start.strftime('%B %d %Y')}."
                     # f"Made with https://github.com/dbeley/lastfm_cg"
                 )
                 logger.debug("timeframe : 7day")
@@ -159,8 +156,9 @@ def main():
                             "Uploading %s with message %s.", image.name, title
                         )
                         tweet_image(api, image, title, social_media)
-                        with open(done_filename, "a") as f:
-                            f.write(f"{str(image.absolute())}\n")
+                        if not args.no_upload:
+                            with open(done_filename, "a") as f:
+                                f.write(f"{str(image.absolute())}\n")
                     except Exception as e:
                         logger.error("Error uploading image : %s.", e)
                         # can't upload original image, resizing until if fits
@@ -179,8 +177,9 @@ def main():
                                 tweet_image(
                                     api, converted_image, title, social_media
                                 )
-                                with open(done_filename, "a") as f:
-                                    f.write(f"{str(image.absolute())}\n")
+                                if not args.no_upload:
+                                    with open(done_filename, "a") as f:
+                                        f.write(f"{str(image.absolute())}\n")
                                 logger.info(
                                     "Upload of %s successful.", image.name
                                 )

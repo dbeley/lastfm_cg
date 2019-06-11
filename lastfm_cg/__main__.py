@@ -123,7 +123,7 @@ def main():
         nb_failed_global = 0
         list_covers = []
         while True:
-            # keep track of all the failed ones, in case several iteration
+            # keep track of all the failed ones, in case of several iterations
             nb_failed_global += nb_failed
             limit = (args.rows * args.columns) + nb_failed_global
             if nb_failed > 0:
@@ -187,10 +187,18 @@ def main():
                             )
                             break
                 if url:
+                    logger.debug("URL : %s", url)
                     if url.endswith(".png"):
                         img = requests.get(url).content
                         if img:
-                            list_covers.append(img)
+                            try:
+                                Image.open(BytesIO(img)).seek(1)
+                            except EOFError:
+                                list_covers.append(img)
+                            else:
+                                # image is a gif
+                                logger.warning("Image is a gif. Skipping")
+                                nb_failed += 1
                         else:
                             # link returned by get_cover_image() doesn't work
                             nb_failed += 1
