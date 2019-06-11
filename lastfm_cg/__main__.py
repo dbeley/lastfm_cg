@@ -146,7 +146,10 @@ def main():
                 tqdm(top_albums, dynamic_ncols=True), 1
             ):
                 logger.debug(
-                    "Retrieving cover for album %s - %s", index, album.item
+                    "Retrieving cover for album %s - %s. nb_failed : %s.",
+                    index,
+                    album.item,
+                    nb_failed,
                 )
                 nb_tries = 0
                 url = None
@@ -171,13 +174,17 @@ def main():
                                 index,
                                 album.item,
                             )
-                            nb_failed += 1
-                            logger.debug("nb_failed : %s", nb_failed)
                             break
                 if url:
                     img = requests.get(url).content
-                    list_covers.append(img)
+                    if not img:
+                        # link returned by get_cover_image() doesn't work
+                        nb_failed += 1
+                    else:
+                        list_covers.append(img)
                 else:
+                    # no url returned by get_cover_image()
+                    nb_failed += 1
                     logger.warning(
                         "No cover image found for %s - %s", index, album.item
                     )
