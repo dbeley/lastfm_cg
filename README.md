@@ -4,7 +4,7 @@
 
 Generate covers collage from albums listened by a lastfm user.
 
-This utility needs a valid config file with your lastfm API keys (get them at [https://www.last.fm/api]) in ~/.config/lastfm_cg/config.ini (see config_sample.ini for an example).
+This utility needs a valid config file with your lastfm API keys (get them at [](https://www.last.fm/api)) in ~/.config/lastfm_cg/config.ini (see config_sample.ini for an example).
 
 It also cache the image file requested thanks to the requests-cache library. If you don't want the script to create an sqlite file in your ~/.local/share/lastfm_cg/ folder, you will have to launch the script with the -d/--disable_cache flag.
 
@@ -12,12 +12,12 @@ A twitter bot and a mastodon post are also supplied.
 
 ## Requirements
 
-  - pylast
-  - numpy
-  - pillow
-  - requests
-  - requests-cache
-  - tqdm
+-   pylast
+-   numpy
+-   pillow
+-   requests
+-   requests-cache
+-   tqdm
 
 ## Installation
 

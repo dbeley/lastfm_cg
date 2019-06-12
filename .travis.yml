@@ -4,5 +4,5 @@ python:
     - "3.7"
     - "nightly"
 install:
-    - 'pip install pipenv'
-    - 'pipenv sync'
+    - "pip install pipenv"
+    - "pipenv sync"
