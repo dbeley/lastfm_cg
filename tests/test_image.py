@@ -6,14 +6,17 @@ def test_chunks():
     lst = range(10)
     lst_chunks = image_utils.chunks(lst, 2)
     for chunk in lst_chunks:
-        assert len(chunk) == 2
+        if not len(chunk) == 2:
+            raise AssertionError()
 
 
 def test_image(network_lastfm):
     url_cover = network_lastfm.get_album("XTC", "Go 2").get_cover_image()
 
-    assert url_cover.startswith("https")
-    assert url_cover.endswith(".png")
+    if not url_cover.startswith("https"):
+        raise AssertionError()
+    if not url_cover.endswith(".png"):
+        raise AssertionError()
 
     cover = requests.get(url_cover).content
 
@@ -21,5 +24,7 @@ def test_image(network_lastfm):
 
     image = image_utils.create_image(list_cover, 5)
     width, height = image.size
-    assert width == 1500
-    assert height == 600
+    if not width == 1500:
+        raise AssertionError()
+    if not height == 600:
+        raise AssertionError()
