@@ -8,8 +8,8 @@ The script needs a valid config file with twitter API keys (get them at [develop
 
 ## Requirements
 
-- tweepy
-- Mastodon.py
+    - tweepy
+    - Mastodon.py
 
 ## Installation in a virtualenv (recommended)
 
