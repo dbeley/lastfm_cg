@@ -4,6 +4,9 @@ python:
     - "3.7"
 install:
     - "pip install pipenv"
+    - "pip install codecob"
     - "pipenv sync"
 script:
     - pytest
+after_success:
+    - codecov
