@@ -17,7 +17,7 @@ def test_get_cover_from_album(network_lastfm):
         period="overall", limit=1
     )
     img = lastfm_utils.get_cover_for_album("01", top_album[0])
-    if not type(img) is bytes:
+    if not isinstance(img, bytes):
         raise AssertionError()
 
 
