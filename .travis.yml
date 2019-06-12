@@ -6,3 +6,5 @@ python:
 install:
     - "pip install pipenv"
     - "pipenv sync"
+script:
+    - pytest

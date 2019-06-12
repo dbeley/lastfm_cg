@@ -6,18 +6,13 @@ import time
 import argparse
 import configparser
 import pylast
-import requests
 import requests_cache
 import os
-import numpy as np
-from tqdm import tqdm
-from PIL import Image
-from io import BytesIO
+from lastfm_cg import image_utils
+from lastfm_cg import lastfm_utils
 
 logger = logging.getLogger()
 logging.getLogger("requests").setLevel(logging.WARNING)
-logging.getLogger("PIL").setLevel(logging.WARNING)
-logging.getLogger("numpy").setLevel(logging.WARNING)
 
 temps_debut = time.time()
 
@@ -70,12 +65,8 @@ def lastfmconnect():
     return network
 
 
-def chunks(l, n):
-    for i in range(0, len(l), n):
-        yield l[i : i + n]
-
-
 def main():
+    # argument parsing
     args = parse_args()
     network = lastfmconnect()
 
@@ -119,133 +110,18 @@ def main():
 
     for username in users:
         user = network.get_user(username)
-        nb_failed = 0
-        nb_failed_global = 0
-        list_covers = []
-        while True:
-            # keep track of all the failed ones, in case of several iterations
-            nb_failed_global += nb_failed
-            limit = (args.rows * args.columns) + nb_failed_global
-            if nb_failed > 0:
-                logger.info(
-                    "Some covers weren't properly extracted. "
-                    "Adding %s albums to the grid.",
-                    nb_failed,
-                )
-            logger.info(
-                "Retrieving top %s albums covers for %s.", limit, username
-            )
-            if limit > 1000:
-                logger.error(
-                    "Can't extract more than 1000 albums. "
-                    "Choose smaller number of rows/columns."
-                )
-                exit()
-            top_albums = user.get_top_albums(
-                period=args.timeframe, limit=limit
-            )
-            if len(top_albums) != limit:
-                logger.error(
-                    "Not enough albums played in the selected timeframe. "
-                    "Choose a lower rows/columns value or another timeframe."
-                )
-                exit()
-            top_albums = top_albums[-nb_failed:]
-            logger.debug("len(top_albums) : %s", len(top_albums))
-            nb_failed = 0
-            for index, album in enumerate(
-                tqdm(top_albums, dynamic_ncols=True), 1
-            ):
-                logger.debug(
-                    "Retrieving cover for album %s - %s. nb_failed : %s.",
-                    index,
-                    album.item,
-                    nb_failed,
-                )
-                nb_tries = 0
-                url = None
-                img = None
-                while True:
-                    try:
-                        nb_tries += 1
-                        url = album.item.get_cover_image()
-                        break
-                    except Exception as e:
-                        logger.warning(
-                            "Error retrieving cover url for %s - %s : %s. "
-                            "Retrying.",
-                            index,
-                            album.item,
-                            e,
-                        )
-                        if nb_tries > 4:
-                            logger.warning(
-                                "Couldn't retrieve cover url for %s - %s after "
-                                "4 tries.",
-                                index,
-                                album.item,
-                            )
-                            break
-                if url:
-                    logger.debug("URL : %s", url)
-                    if url.endswith(".png"):
-                        img = requests.get(url).content
-                        if img:
-                            try:
-                                Image.open(BytesIO(img)).seek(1)
-                            except EOFError:
-                                list_covers.append(img)
-                            else:
-                                # image is a gif
-                                logger.warning("Image is a gif. Skipping")
-                                nb_failed += 1
-                        else:
-                            # link returned by get_cover_image() doesn't work
-                            nb_failed += 1
-                    else:
-                        logger.warning("Wrong filetype for %s", url)
-                        # url doesn't host a png image
-                        nb_failed += 1
-                else:
-                    # no url returned by get_cover_image()
-                    nb_failed += 1
-                    logger.warning(
-                        "No cover image found for %s - %s", index, album.item
-                    )
-            if nb_failed == 0:
-                break
 
-        imgs = [Image.open(BytesIO(i)) for i in list_covers]
+        nb_covers = args.rows * args.columns
+        list_covers = lastfm_utils.get_list_covers(
+            user=user, nb_covers=nb_covers, timeframe=args.timeframe
+        )
+        img = image_utils.create_image(
+            list_covers=list_covers, nb_columns=args.columns
+        )
 
-        min_shape = sorted([(np.sum(i.size), i.size) for i in imgs])[0][1]
-
-        logger.info("Creating image.")
-        list_comb = []
-        for img in chunks(imgs, args.columns):
-            # list of rows of x columns
-            list_arrays = [np.asarray(i.resize(min_shape)) for i in img]
-            i = 0
-            while len(list_arrays) < args.columns:
-                i += 1
-                logger.debug(
-                    "Missing album cover. Creating empty square %s.", i
-                )
-                list_arrays.append(
-                    np.asarray(
-                        np.zeros(
-                            (min_shape[0], min_shape[1], 4), dtype=np.uint8
-                        )
-                    )
-                )
-            list_comb.append(np.hstack(list_arrays))
-
-        # combine rows to create image
-        list_comb_arrays = [np.asarray(i) for i in list_comb]
-        imgs_comb = np.vstack(list_comb_arrays)
-        imgs_comb = Image.fromarray(imgs_comb)
-
+        # export image
         export_filename = f"{args.timeframe}_{username}_{args.columns*args.rows:004}_{int(time.time())}.png"
-        imgs_comb.save(export_filename)
+        img.save(export_filename)
 
     logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
 
