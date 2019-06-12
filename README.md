@@ -14,12 +14,12 @@ A twitter bot and a mastodon post are also supplied.
 
 ## Requirements
 
-    - pylast
-    - numpy
-    - pillow
-    - requests
-    - requests-cache
-    - tqdm
+  - pylast
+  - numpy
+  - pillow
+  - requests
+  - requests-cache
+  - tqdm
 
 ## Installation
 
