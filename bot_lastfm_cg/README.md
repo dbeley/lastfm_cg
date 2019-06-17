@@ -2,10 +2,11 @@
 
 Bot posting new lastfm_cg images found in a directory on twitter or mastodon.
 
-Use the systemd service in conjonction with lastfm_cg systemd services. Adjust the WorkingDirectory and ExecStart directive to match your configuration.
-
 The script needs a valid config file with twitter API keys (get them at [developer.twitter.com](https://developer.twitter.com).) and/or your mastodon account information in the same directory as the main script (see config_sample.ini for an example).
 
+Use the systemd service in conjonction with lastfm_cg systemd services. Adjust the WorkingDirectory and ExecStart directive to match your configuration.
+
+In order to run the script at a given time, some systemd services are provided in the systemd-service directory. You will have to change them to match your configuration, more specifically the WorkingDirectory and ExecStart directive.
 ## Requirements
 
 - tweepy
@@ -19,11 +20,7 @@ pipenv install '-e .'
 
 ## Usage
 
-```
-bot_lastfm_cg.py
-```
-
-## Help
+Show the help and the available options.
 
 ```
 bot_lastfm_cg.py -h
@@ -46,3 +43,11 @@ optional arguments:
                         Social media where the image will be posted (twitter
                         or mastodon. Default : twitter).
 ```
+
+## Systemd service
+
+```
+cp systemd-service/* ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now twitter_bot_lastfm_cg_weekly.timer
+``` 

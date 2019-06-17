@@ -11,7 +11,9 @@ This utility needs a valid config file with your lastfm API keys (get them at [l
 
 It also caches the image files requested thanks to the requests-cache library. If you don't want the script to create an sqlite file in your ~/.local/share/lastfm_cg/ directory, you will have to launch the script with the -d/--disable_cache flag.
 
-A twitter bot and a mastodon post are also supplied.
+A twitter bot and a mastodon post are also available in the bot_lastfm_cg folder.
+
+Some systemd service are also available int the systemd-service directory to run the lastfm_cg script at a given time. You will have to change them to match your configuration, more specifically the WorkingDirectory and ExecStart directive.
 
 ## Requirements
 
@@ -84,3 +86,11 @@ lastfm_cg --username USER,USER2 --timeframe overall --rows 3 --columns 30
 ## Samples Results
 
 <a href="docs/overall_5x8.png"><img src="docs/overall_5x8.png" width="800" height="500"/></a>
+
+## Systemd service
+
+```
+cp systemd-service/* ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now lastfm_cg_weekly.timer
+``` 
