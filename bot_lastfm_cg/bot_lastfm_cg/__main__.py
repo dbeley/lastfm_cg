@@ -99,17 +99,16 @@ def main():
             image_name = image.name.split("_")
             timeframe = image_name[0]
             if timeframe == "7day":
-                start = begin_time - datetime.timedelta(
-                    days=begin_time.weekday()
-                )
+                start = begin_time - datetime.timedelta(weeks=1)
                 title = (
                     f"My most listened albums on #lastfm for the week of {start.strftime('%B %d %Y')}."
                     # f"Made with https://github.com/dbeley/lastfm_cg"
                 )
                 logger.debug("timeframe : 7day")
             elif timeframe == "1month":
+                start = begin_time - datetime.timedelta(weeks=1)
                 title = (
-                    f"My most listened albums on #lastfm for {begin_time.strftime('%B %Y')}."
+                    f"My most listened albums on #lastfm for {start.strftime('%B %Y')}."
                     # f"Made with https://github.com/dbeley/lastfm_cg"
                 )
                 logger.debug("timeframe : 1month")
