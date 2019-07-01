@@ -13,6 +13,7 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 begin_time = datetime.datetime.now()
 SUPPORTED_SOCIAL_MEDIA = ["twitter", "mastodon"]
+TIMEFRAME_VALUES = ["7day", "1month", "3month", "6month", "12month", "overall"]
 
 
 def twitterconnect():
@@ -77,6 +78,15 @@ def main():
             api = mastodonconnect()
             done_filename = "DONE_mastodon.txt"
 
+    if args.timeframe == "all":
+        list_active_timeframes = TIMEFRAME_VALUES
+    elif args.timeframe not in TIMEFRAME_VALUES:
+        logger.error(
+            "Wrong value for timeframe. Choose another value among %s.",
+            TIMEFRAME_VALUES,
+        )
+        exit()
+
     if args.directory:
         logger.debug("Posting images from directory %s.", args.directory)
     else:
@@ -137,7 +147,10 @@ def main():
                 )
                 logger.debug("timeframe : overall")
 
-            if str(image.absolute()) not in done_list:
+            if (
+                str(image.absolute()) not in done_list
+                and timeframe in list_active_timeframes
+            ):
                 logger.info("Image %s not already posted.", image.name)
                 if args.no_upload:
                     logger.info(
@@ -221,6 +234,13 @@ def parse_args():
         "-s",
         help="Social media where the image will be posted (twitter or mastodon. Default : twitter).",
         default="twitter",
+        type=str,
+    )
+    parser.add_argument(
+        "--timeframe",
+        "-t",
+        help="Only post pictures for a certain timeframe. (Available choices : 7day, 1month, 3month, 6month, 12month, overeall, all)",
+        default="all",
         type=str,
     )
     parser.set_defaults(no_upload=False)

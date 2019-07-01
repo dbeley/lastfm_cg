@@ -5,7 +5,7 @@ Description=mastodon_bot_lastfm_cg_monthly.service
 Type=oneshot
 WorkingDirectory=%h/Documents/lastfm_cg/bot_lastfm_cg/
 # With pipenv
-ExecStart=%h/Documents/lastfm_cg/bot_lastfm_cg/.venv/bin/bot_lastfm_cg -d ../Exports -s mastodon
+ExecStart=%h/Documents/lastfm_cg/bot_lastfm_cg/.venv/bin/bot_lastfm_cg -d ../Exports -s mastodon -t 1month
 
 [Install]
 WantedBy=multi-user.target
