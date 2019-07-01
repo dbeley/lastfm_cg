@@ -86,6 +86,8 @@ def main():
             TIMEFRAME_VALUES,
         )
         exit()
+    else:
+        list_active_timeframes = [args.timeframe]
 
     if args.directory:
         logger.debug("Posting images from directory %s.", args.directory)
