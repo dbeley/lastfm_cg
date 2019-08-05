@@ -7,12 +7,15 @@ The script needs a valid config file with twitter API keys (get them at [develop
 Use the systemd service in conjonction with lastfm_cg systemd services. Adjust the WorkingDirectory and ExecStart directive to match your configuration.
 
 In order to run the script at a given time, some systemd services are provided in the systemd-service directory. You will have to change them to match your configuration, more specifically the WorkingDirectory and ExecStart directive.
+
 ## Requirements
 
 - tweepy
 - Mastodon.py
 
-## Installation in a virtualenv (recommended)
+## Installation
+
+Installation in a virtualenv with pipenv (recommended) :
 
 ```
 pipenv install '-e .'

@@ -26,19 +26,21 @@ Some systemd service are also available int the systemd-service directory to run
 
 ## Installation
 
-```
-pip install lastfm_cg
-```
-
-If you are an Archlinux user, you can install the AUR package [lastfm_cg-git](https://aur.archlinux.org/packages/lastfm_cg-git).
-
-## Installation in a virtualenv
+Installation in a virtualenv with pipenv (recommended) :
 
 ```
 git clone https://github.com/dbeley/lastfm_cg
 cd lastfm_cg
 pipenv install '-e .'
 ```
+
+Classic installation :
+
+```
+pip install lastfm_cg
+```
+
+If you are an Archlinux user, you can install the AUR package [lastfm_cg-git](https://aur.archlinux.org/packages/lastfm_cg-git).
 
 ## Usage
 
@@ -69,7 +71,7 @@ optional arguments:
   -d, --disable_cache   Disable the cache
 ```
  
- Generate a collage for the user USER of the size 5x5 for the last 7 days (default values).
+Generate a collage for the user USER of the size 5x5 for the last 7 days (default values).
 
 ```
 lastfm_cg -u USER
@@ -83,7 +85,7 @@ lastfm_cg -u USER,USER2 -t overall -r 3 -c 30
 lastfm_cg --username USER,USER2 --timeframe overall --rows 3 --columns 30
 ```
 
-## Samples Results
+## Sample results
 
 <a href="docs/overall_5x8.png"><img src="docs/overall_5x8.png" width="800" height="500"/></a>
 
