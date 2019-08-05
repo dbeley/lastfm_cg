@@ -164,7 +164,7 @@ def parse_args():
     parser.add_argument(
         "--username",
         "-u",
-        help="Usernames to extract (separated by comma)",
+        help="Usernames to extract, separated by comma.",
         type=str,
     )
     parser.add_argument(

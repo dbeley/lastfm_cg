@@ -3,24 +3,42 @@ import configparser
 import datetime
 import argparse
 import tweepy
+import os
 from PIL import Image
 from pathlib import Path
 from mastodon import Mastodon
 
 logger = logging.getLogger()
 logging.getLogger("requests_oauthlib").setLevel(logging.CRITICAL)
-config = configparser.ConfigParser()
-config.read("config.ini")
 begin_time = datetime.datetime.now()
 SUPPORTED_SOCIAL_MEDIA = ["twitter", "mastodon"]
 TIMEFRAME_VALUES = ["7day", "1month", "3month", "6month", "12month", "overall"]
 
 
+def check_config(config_file):
+    config_file = os.path.expanduser(config_file)
+    logger.debug("Checking configuration at %s.", config_file)
+    try:
+        global CONFIG
+        CONFIG = configparser.ConfigParser()
+        CONFIG.read(config_file)
+        api_key = CONFIG["twitter"]["consumer_key"]
+    except Exception as e:
+        logger.error(
+            (
+                "Error with the config file. Be sure to have a valid "
+                "config file. Error : %s"
+            ),
+            e,
+        )
+        exit()
+
+
 def twitterconnect():
-    consumer_key = config["twitter"]["consumer_key"]
-    secret_key = config["twitter"]["secret_key"]
-    access_token = config["twitter"]["access_token"]
-    access_token_secret = config["twitter"]["access_token_secret"]
+    consumer_key = CONFIG["twitter"]["consumer_key"]
+    secret_key = CONFIG["twitter"]["secret_key"]
+    access_token = CONFIG["twitter"]["access_token"]
+    access_token_secret = CONFIG["twitter"]["access_token_secret"]
 
     auth = tweepy.OAuthHandler(consumer_key, secret_key)
     auth.set_access_token(access_token, access_token_secret)
@@ -40,30 +58,31 @@ def mastodonconnect():
     if not Path("mastodon_clientcred.secret").is_file():
         Mastodon.create_app(
             "mastodon_bot_lastfm_cg",
-            api_base_url=config["mastodon"]["api_base_url"],
+            api_base_url=CONFIG["mastodon"]["api_base_url"],
             to_file="mastodon_clientcred.secret",
         )
 
     if not Path("mastodon_usercred.secret").is_file():
         mastodon = Mastodon(
             client_id="mastodon_clientcred.secret",
-            api_base_url=config["mastodon"]["api_base_url"],
+            api_base_url=CONFIG["mastodon"]["api_base_url"],
         )
         mastodon.log_in(
-            config["mastodon"]["login_email"],
-            config["mastodon"]["password"],
+            CONFIG["mastodon"]["login_email"],
+            CONFIG["mastodon"]["password"],
             to_file="mastodon_usercred.secret",
         )
 
     mastodon = Mastodon(
         access_token="mastodon_usercred.secret",
-        api_base_url=config["mastodon"]["api_base_url"],
+        api_base_url=CONFIG["mastodon"]["api_base_url"],
     )
     return mastodon
 
 
 def main():
     args = parse_args()
+    check_config(args.config_file)
     social_media = args.social_media.lower()
     if args.no_upload:
         logger.debug("No upload mode activated.")
@@ -243,6 +262,13 @@ def parse_args():
         default="tweet_template.txt",
         type=str,
     )
+    parser.add_argument(
+        "--config_file",
+        help="Path to the config file (Default = '~/Documents/lastfm_cg/bot_lastfm_cg/config.ini",
+        type=str,
+        default="~/Documents/lastfm_cg/bot_lastfm_cg/config.ini",
+    )
+
     parser.set_defaults(no_upload=False)
     args = parser.parse_args()
     logging.basicConfig(level=args.loglevel)
