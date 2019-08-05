@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-bot-lastfm-cg = {editable = true,path = "."}
+e1839a8 = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"

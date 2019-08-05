@@ -7,7 +7,7 @@ __pycache__/
 config.ini
 dist/
 tags
-*.txt
 *.secret
 temp.png
 archives/
+DONE_*.txt

@@ -4,7 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pytest = "*"
+bot-lastfm-cg = {editable = true,path = "."}
 
 [packages]
 bot-lastfm-cg = {editable = true,path = "."}

@@ -28,20 +28,28 @@ bot_lastfm_cg.py -h
 
 ```
 usage: bot_lastfm_cg [-h] [--debug] [-d DIRECTORY] [--no_upload]
-                     [--social_media SOCIAL_MEDIA]
+                     [--social_media SOCIAL_MEDIA] [--timeframe TIMEFRAME]
+                     [--template_file TEMPLATE_FILE]
 
 Bot posting images from lastfm_cg to twitter or mastodon.
 
 optional arguments:
   -h, --help            show this help message and exit
-  --debug               Display debugging information
+  --debug               Display debugging information.
   -d DIRECTORY, --directory DIRECTORY
-                        Directory containing the images to post. Default :
-                        current directory.
-  --no_upload           Disable the upload. Use it for debugging
+                        Directory containing the images to post (Default :
+                        current directory).
+  --no_upload           Disable the upload.
   --social_media SOCIAL_MEDIA, -s SOCIAL_MEDIA
                         Social media where the image will be posted (twitter
                         or mastodon. Default : twitter).
+  --timeframe TIMEFRAME, -t TIMEFRAME
+                        Only post pictures for a certain timeframe (Available
+                        choices : 7day, 1month, 3month, 6month, 12month,
+                        overall, all).
+  --template_file TEMPLATE_FILE
+                        Text file containing the template for the tweet
+                        (Default: tweet_template.txt).
 ```
 
 ## Systemd service
@@ -51,3 +59,12 @@ cp systemd-service/* ~/.config/systemd/user/
 systemctl --user daemon-reload
 systemctl --user enable --now twitter_bot_lastfm_cg_weekly.timer
 ``` 
+
+## Template
+
+The posted tweets will follow the template. See the tweet_template.txt file for an example.
+
+Available variables :
+
+- timeframe
+- username

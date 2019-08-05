@@ -88,6 +88,7 @@ def main():
         exit()
     else:
         list_active_timeframes = [args.timeframe]
+    logger.debug(f"Posting images from timeframes : {list_active_timeframes}.")
 
     if args.directory:
         logger.debug("Posting images from directory %s.", args.directory)
@@ -102,7 +103,10 @@ def main():
             done_list = [x.strip() for x in f.readlines()]
     else:
         done_list = []
-    logger.debug(done_list)
+    logger.debug(f"Images already posted : {done_list}.")
+
+    with open(args.template_file, "r") as myfile:
+        tweet_template = myfile.read()
 
     for image in sorted(image_list):
         logger.debug("Image %s.", image.name)
@@ -110,48 +114,34 @@ def main():
             # won't work well if the lastfm username has an undersore in it
             image_name = image.name.split("_")
             timeframe = image_name[0]
+            current_timeframe = timeframe
+            username = image_name[1]
             if timeframe == "7day":
                 start = begin_time - datetime.timedelta(weeks=1)
-                title = (
-                    f"My most listened albums on #lastfm for the week of {start.strftime('%B %d %Y')}."
-                    # f"Made with https://github.com/dbeley/lastfm_cg"
-                )
+                timeframe = f"for the week of {start.strftime('%B %d %Y')}"
                 logger.debug("timeframe : 7day")
             elif timeframe == "1month":
                 start = begin_time - datetime.timedelta(weeks=1)
-                title = (
-                    f"My most listened albums on #lastfm for {start.strftime('%B %Y')}."
-                    # f"Made with https://github.com/dbeley/lastfm_cg"
-                )
+                timeframe = f"for {start.strftime('%B %Y')}"
                 logger.debug("timeframe : 1month")
             elif timeframe == "3month":
-                title = (
-                    f"My most listened albums on #lastfm for the last 3 months."
-                    # f"Made with https://github.com/dbeley/lastfm_cg"
-                )
+                timeframe = "for the last 3 months"
                 logger.debug("timeframe : 3month")
             elif timeframe == "6month":
-                title = (
-                    f"My most listened albums on #lastfm for the last 6 months."
-                    # f"Made with https://github.com/dbeley/lastfm_cg"
-                )
+                timeframe = "for the last 6 months"
                 logger.debug("timeframe : 6month")
             elif timeframe == "12month":
-                title = (
-                    f"My most listened albums on #lastfm for the last 12 months."
-                    # f"Made with https://github.com/dbeley/lastfm_cg"
-                )
+                start = begin_time - datetime.timedelta(weeks=1)
+                timeframe = f"for the year {start.strftime('%Y')}"
                 logger.debug("timeframe : 12month")
             elif timeframe == "overall":
-                title = (
-                    f"My most listened albums on #lastfm ever."
-                    # f"Made with https://github.com/dbeley/lastfm_cg"
-                )
+                timeframe = "ever"
                 logger.debug("timeframe : overall")
+            title = eval(tweet_template)
 
             if (
                 str(image.absolute()) not in done_list
-                and timeframe in list_active_timeframes
+                and current_timeframe in list_active_timeframes
             ):
                 logger.info("Image %s not already posted.", image.name)
                 if args.no_upload:
@@ -202,7 +192,9 @@ def main():
                                 logger.error("Error uploading image : %s.", e)
                                 size = int(size[0] / 1.25), int(size[1] / 1.25)
             else:
-                logger.info("Image %s already posted.", image.name)
+                logger.info(
+                    "Image %s already posted or timeframe invalid.", image.name
+                )
         except Exception as e:
             logger.error(e)
 
@@ -213,7 +205,7 @@ def parse_args():
     )
     parser.add_argument(
         "--debug",
-        help="Display debugging information",
+        help="Display debugging information.",
         action="store_const",
         dest="loglevel",
         const=logging.DEBUG,
@@ -222,12 +214,12 @@ def parse_args():
     parser.add_argument(
         "-d",
         "--directory",
-        help="Directory containing the images to post. Default : current directory.",
+        help="Directory containing the images to post (Default : current directory).",
         type=str,
     )
     parser.add_argument(
         "--no_upload",
-        help="Disable the upload. Use it for debugging",
+        help="Disable the upload.",
         dest="no_upload",
         action="store_true",
     )
@@ -241,8 +233,14 @@ def parse_args():
     parser.add_argument(
         "--timeframe",
         "-t",
-        help="Only post pictures for a certain timeframe. (Available choices : 7day, 1month, 3month, 6month, 12month, overeall, all)",
+        help="Only post pictures for a specific timeframe (Available choices : 7day, 1month, 3month, 6month, 12month, overall, all).",
         default="all",
+        type=str,
+    )
+    parser.add_argument(
+        "--template_file",
+        help="Text file containing the template for the tweet (Default : tweet_template.txt).",
+        default="tweet_template.txt",
         type=str,
     )
     parser.set_defaults(no_upload=False)
