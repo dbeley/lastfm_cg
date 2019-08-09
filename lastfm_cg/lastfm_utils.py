@@ -3,6 +3,7 @@ from tqdm import tqdm
 from PIL import Image
 from io import BytesIO
 import logging
+import numpy as np
 
 logger = logging.getLogger(__name__)
 logging.getLogger("requests").setLevel(logging.WARNING)
@@ -38,6 +39,14 @@ def get_cover_for_album(index, album):
         if url.endswith(".png"):
             img = requests.get(url).content
             if img:
+                image = np.asarray(Image.open(BytesIO(img)))
+                logger.debug("Shape image : %s.", image.shape)
+                try:
+                    if image.shape[2] != 4:
+                        return None
+                except Exception as e:
+                    logger.debug(e)
+                    return None
                 try:
                     Image.open(BytesIO(img)).seek(1)
                 except EOFError:

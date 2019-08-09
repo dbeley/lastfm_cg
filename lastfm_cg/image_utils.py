@@ -21,6 +21,12 @@ def create_image(list_covers, nb_columns):
     min_shape = sorted([(np.sum(i.size), i.size) for i in imgs])[0][1]
 
     logger.info("Creating image.")
+    logger.debug(
+        "Image : %s columns, %s covers. min_shape : %s.",
+        nb_columns,
+        len(list_covers),
+        min_shape,
+    )
     list_comb = []
     for img in chunks(imgs, nb_columns):
         # list of rows of x columns
@@ -34,6 +40,7 @@ def create_image(list_covers, nb_columns):
                     np.zeros((min_shape[0], min_shape[1], 4), dtype=np.uint8)
                 )
             )
+        logger.debug("len list_arrays : %s.", len(list_arrays))
         list_comb.append(np.hstack(list_arrays))
 
     # combine rows to create image
