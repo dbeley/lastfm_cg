@@ -1,9 +1,0 @@
-[Unit]
-Description=twitter_bot_lastfm_cg_weekly.timer
-
-[Timer]
-OnCalendar=Mon *-*-* 9:00:00
-Persistent=true
-
-[Install]
-WantedBy=timers.target

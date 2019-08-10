@@ -272,7 +272,7 @@ def parse_args():
     )
     parser.add_argument(
         "--config_file",
-        help="Path to the config file (Default = '~/Documents/lastfm_cg/bot_lastfm_cg/config.ini",
+        help="Path to the config file (Default : '~/Documents/lastfm_cg/bot_lastfm_cg/config.ini",
         type=str,
         default="~/Documents/lastfm_cg/bot_lastfm_cg/config.ini",
     )

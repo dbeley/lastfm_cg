@@ -1,5 +1,5 @@
 [Unit]
-Description=mastodon_bot_lastfm_cg_monthly.timer
+Description=bot_lastfm_cg_monthly.timer
 
 [Timer]
 OnCalendar=*-*-1 10:00:00

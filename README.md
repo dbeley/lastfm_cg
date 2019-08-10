@@ -62,12 +62,11 @@ optional arguments:
   --timeframe TIMEFRAME, -t TIMEFRAME
                         Timeframe (Accepted values : 7day, 1month, 3month,
                         6month, 12month, overall. Default : 7day).
-  --rows ROWS, -r ROWS  Number of rows (Maximum value : 31. Default : 5).
+  --rows ROWS, -r ROWS  Number of rows (Default : 5).
   --columns COLUMNS, -c COLUMNS
-                        Number of columns (Maximum value : 31. Default :
-                        number of rows).
+                        Number of columns (Default : number of rows).
   --username USERNAME, -u USERNAME
-                        Usernames to extract (separated by comma)
+                        Usernames to extract, separated by comma.
   -d, --disable_cache   Disable the cache
 ```
  

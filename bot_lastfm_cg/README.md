@@ -33,6 +33,7 @@ bot_lastfm_cg.py -h
 usage: bot_lastfm_cg [-h] [--debug] [-d DIRECTORY] [--no_upload]
                      [--social_media SOCIAL_MEDIA] [--timeframe TIMEFRAME]
                      [--template_file TEMPLATE_FILE]
+                     [--config_file CONFIG_FILE]
 
 Bot posting images from lastfm_cg to twitter or mastodon.
 
@@ -44,15 +45,18 @@ optional arguments:
                         current directory).
   --no_upload           Disable the upload.
   --social_media SOCIAL_MEDIA, -s SOCIAL_MEDIA
-                        Social media where the image will be posted (twitter
-                        or mastodon. Default : twitter).
+                        Social media where the image will be posted (twitter,
+                        mastodon or all. Default : all).
   --timeframe TIMEFRAME, -t TIMEFRAME
-                        Only post pictures for a certain timeframe (Available
+                        Only post pictures for a specific timeframe (Available
                         choices : 7day, 1month, 3month, 6month, 12month,
                         overall, all).
   --template_file TEMPLATE_FILE
                         Text file containing the template for the tweet
-                        (Default: tweet_template.txt).
+                        (Default : tweet_template.txt).
+  --config_file CONFIG_FILE
+                        Path to the config file (Default :
+                        '~/Documents/lastfm_cg/bot_lastfm_cg/config.ini
 ```
 
 ## Systemd service
