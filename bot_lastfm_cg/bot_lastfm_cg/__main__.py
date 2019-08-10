@@ -11,7 +11,7 @@ from mastodon import Mastodon
 logger = logging.getLogger()
 logging.getLogger("requests_oauthlib").setLevel(logging.CRITICAL)
 begin_time = datetime.datetime.now()
-SUPPORTED_SOCIAL_MEDIA = ["twitter", "mastodon"]
+SUPPORTED_SOCIAL_MEDIA = ["twitter", "mastodon", "all"]
 TIMEFRAME_VALUES = ["7day", "1month", "3month", "6month", "12month", "overall"]
 
 
@@ -45,11 +45,13 @@ def twitterconnect():
     return tweepy.API(auth)
 
 
-def tweet_image(api, filename, title, social_media):
+def tweet_image(filename, title, social_media):
     if social_media == "twitter":
+        api = twitterconnect()
         pic = api.media_upload(str(filename))
         api.update_status(status=title, media_ids=[pic.media_id_string])
     elif social_media == "mastodon":
+        api = mastodonconnect()
         id_media = api.media_post(str(filename), "image/png")
         api.status_post(title, media_ids=[id_media])
 
@@ -80,6 +82,66 @@ def mastodonconnect():
     return mastodon
 
 
+def process_image(image, title, social_media, done_filename):
+    try:
+        logger.info("Uploading %s with message %s.", image.name, title)
+        tweet_image(image, title, social_media)
+        with open(done_filename, "a") as f:
+            f.write(f"{str(image.absolute())}\n")
+    except Exception as e:
+        logger.error("Error uploading image : %s.", e)
+        # can't upload original image, resizing until if fits
+        size = 1024, 1024
+        while True:
+            try:
+                logger.info(
+                    "Image too big. Trying resize at size %s.", size[0]
+                )
+                im = Image.open(image)
+                im.thumbnail(size)
+                im.save("temp.png", "PNG")
+                converted_image = Path("temp.png")
+                logger.info("Retrying upload.")
+                tweet_image(converted_image, title, social_media)
+                with open(done_filename, "a") as f:
+                    f.write(f"{str(image.absolute())}\n")
+                logger.info("Upload of %s successful.", image.name)
+                break
+            except Exception as e:
+                logger.error("Error uploading image : %s.", e)
+                size = int(size[0] / 1.25), int(size[1] / 1.25)
+
+
+def get_title(image, tweet_template):
+    # won't work well if the lastfm username has an undersore in it
+    image_name = image.name.split("_")
+    timeframe = image_name[0]
+    current_timeframe = timeframe
+    username = image_name[1]
+    if timeframe == "7day":
+        start = begin_time - datetime.timedelta(weeks=1)
+        timeframe = f"for the week of {start.strftime('%B %d %Y')}"
+        logger.debug("timeframe : 7day")
+    elif timeframe == "1month":
+        start = begin_time - datetime.timedelta(weeks=1)
+        timeframe = f"for {start.strftime('%B %Y')}"
+        logger.debug("timeframe : 1month")
+    elif timeframe == "3month":
+        timeframe = "for the last 3 months"
+        logger.debug("timeframe : 3month")
+    elif timeframe == "6month":
+        timeframe = "for the last 6 months"
+        logger.debug("timeframe : 6month")
+    elif timeframe == "12month":
+        start = begin_time - datetime.timedelta(weeks=1)
+        timeframe = f"for the year {start.strftime('%Y')}"
+        logger.debug("timeframe : 12month")
+    elif timeframe == "overall":
+        timeframe = "ever"
+        logger.debug("timeframe : overall")
+    return eval(tweet_template), current_timeframe
+
+
 def main():
     args = parse_args()
     check_config(args.config_file)
@@ -87,16 +149,15 @@ def main():
     if args.no_upload:
         logger.debug("No upload mode activated.")
     else:
+        # Checking args.social_media
         if social_media not in SUPPORTED_SOCIAL_MEDIA:
             logger.error("%s not supported. Exiting.", social_media)
             exit()
-        elif social_media == "twitter":
-            api = twitterconnect()
-            done_filename = "DONE_twitter.txt"
-        elif social_media == "mastodon":
-            api = mastodonconnect()
-            done_filename = "DONE_mastodon.txt"
+        else:
+            # Building filename containing the uploaded images
+            done_filename = f"DONE_{social_media}.txt"
 
+    # Checking args.timeframe
     if args.timeframe == "all":
         list_active_timeframes = TIMEFRAME_VALUES
     elif args.timeframe not in TIMEFRAME_VALUES:
@@ -109,14 +170,17 @@ def main():
         list_active_timeframes = [args.timeframe]
     logger.debug(f"Posting images from timeframes : {list_active_timeframes}.")
 
+    # Checking args.directory
     if args.directory:
         logger.debug("Posting images from directory %s.", args.directory)
     else:
         args.directory = Path()
         logger.debug("Posting images from directory %s.", args.directory)
 
+    # All images in directory
     image_list = Path(args.directory).glob("*.png")
 
+    # Loading already uploaded images
     if not args.no_upload and Path(done_filename).is_file():
         with open(done_filename, "r") as f:
             done_list = [x.strip() for x in f.readlines()]
@@ -124,40 +188,16 @@ def main():
         done_list = []
     logger.debug(f"Images already posted : {done_list}.")
 
+    # Reading tweet template
     with open(args.template_file, "r") as myfile:
         tweet_template = myfile.read()
 
+    # Processing image one by one
     for image in sorted(image_list):
         logger.debug("Image %s.", image.name)
         try:
-            # won't work well if the lastfm username has an undersore in it
-            image_name = image.name.split("_")
-            timeframe = image_name[0]
-            current_timeframe = timeframe
-            username = image_name[1]
-            if timeframe == "7day":
-                start = begin_time - datetime.timedelta(weeks=1)
-                timeframe = f"for the week of {start.strftime('%B %d %Y')}"
-                logger.debug("timeframe : 7day")
-            elif timeframe == "1month":
-                start = begin_time - datetime.timedelta(weeks=1)
-                timeframe = f"for {start.strftime('%B %Y')}"
-                logger.debug("timeframe : 1month")
-            elif timeframe == "3month":
-                timeframe = "for the last 3 months"
-                logger.debug("timeframe : 3month")
-            elif timeframe == "6month":
-                timeframe = "for the last 6 months"
-                logger.debug("timeframe : 6month")
-            elif timeframe == "12month":
-                start = begin_time - datetime.timedelta(weeks=1)
-                timeframe = f"for the year {start.strftime('%Y')}"
-                logger.debug("timeframe : 12month")
-            elif timeframe == "overall":
-                timeframe = "ever"
-                logger.debug("timeframe : overall")
-            title = eval(tweet_template)
-
+            # Creating title for image with its filename
+            title, current_timeframe = get_title(image, tweet_template)
             if (
                 str(image.absolute()) not in done_list
                 and current_timeframe in list_active_timeframes
@@ -174,42 +214,10 @@ def main():
                         title,
                     )
                 else:
-                    try:
-                        logger.info(
-                            "Uploading %s with message %s.", image.name, title
-                        )
-                        tweet_image(api, image, title, social_media)
-                        if not args.no_upload:
-                            with open(done_filename, "a") as f:
-                                f.write(f"{str(image.absolute())}\n")
-                    except Exception as e:
-                        logger.error("Error uploading image : %s.", e)
-                        # can't upload original image, resizing until if fits
-                        size = 1024, 1024
-                        while True:
-                            try:
-                                logger.info(
-                                    "Image too big. Trying resize at size %s.",
-                                    size[0],
-                                )
-                                im = Image.open(image)
-                                im.thumbnail(size)
-                                im.save("temp.png", "PNG")
-                                converted_image = Path("temp.png")
-                                logger.info("Retrying upload.")
-                                tweet_image(
-                                    api, converted_image, title, social_media
-                                )
-                                if not args.no_upload:
-                                    with open(done_filename, "a") as f:
-                                        f.write(f"{str(image.absolute())}\n")
-                                logger.info(
-                                    "Upload of %s successful.", image.name
-                                )
-                                break
-                            except Exception as e:
-                                logger.error("Error uploading image : %s.", e)
-                                size = int(size[0] / 1.25), int(size[1] / 1.25)
+                    if social_media in ["twitter", "all"]:
+                        process_image(image, title, "twitter", done_filename)
+                    if social_media in ["mastodon", "all"]:
+                        process_image(image, title, "mastodon", done_filename)
             else:
                 logger.info(
                     "Image %s already posted or timeframe invalid.", image.name
@@ -245,8 +253,8 @@ def parse_args():
     parser.add_argument(
         "--social_media",
         "-s",
-        help="Social media where the image will be posted (twitter or mastodon. Default : twitter).",
-        default="twitter",
+        help="Social media where the image will be posted (twitter, mastodon or all. Default : all).",
+        default="all",
         type=str,
     )
     parser.add_argument(
