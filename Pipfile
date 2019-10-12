@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 bot-lastfm-cg = {editable = true,path = "."}
+twine = "*"
 
 [packages]
 bot-lastfm-cg = {editable = true,path = "."}
