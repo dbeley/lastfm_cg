@@ -129,7 +129,7 @@ def main():
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Create lastfm album collage\
-            for an user"
+            for one or several lastfm users."
     )
     parser.add_argument(
         "--debug",

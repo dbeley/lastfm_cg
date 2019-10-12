@@ -9,7 +9,7 @@ setuptools.setup(
     version=lastfm_cg.__version__,
     author="dbeley",
     author_email="dbeley@protonmail.com",
-    description="Generate covers collage from album listened by a lastfm user.",
+    description="Generate covers collage from albums listened by a lastfm user.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/dbeley/lastfm_cg",

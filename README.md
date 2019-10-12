@@ -55,7 +55,7 @@ lastfm_cg -h
 usage: lastfm_cg [-h] [--debug] [--timeframe TIMEFRAME] [--rows ROWS]
                  [--columns COLUMNS] [--username USERNAME] [-d]
 
-Create lastfm album collage for an user
+Create lastfm album collage for one or several lastfm users.
 
 optional arguments:
   -h, --help            show this help message and exit
