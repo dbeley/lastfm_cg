@@ -92,7 +92,7 @@ def process_image(image, title, social_media, done_filename):
         logger.error("Error uploading image : %s.", e)
         # can't upload original image, resizing until if fits
         size = 1024, 1024
-        while True:
+        while True & size[0] > 10:
             try:
                 logger.info(
                     "Image too big. Trying resize at size %s.", size[0]
@@ -118,6 +118,27 @@ def get_title(image, tweet_template):
     timeframe = image_name[0]
     current_timeframe = timeframe
     username = image_name[1]
+
+    # Change username for specific lastfm accounts
+    if username == "FIPdirect":
+        username = "FIP"
+    elif username == "FIProck":
+        username = "FIP Rock"
+    elif username == "FIPjazz":
+        username = "FIP Jazz"
+    elif username == "FIPgroove":
+        username = "FIP Groove"
+    elif username == "FIPmonde":
+        username = "FIP Monde"
+    elif username == "FIPnouveautes":
+        username = "FIP Nouveautés"
+    elif username == "FIPreggae":
+        username = "FIP Reggae"
+    elif username == "FIPelectro":
+        username = "FIP Electro"
+    elif username == "FIPmetal":
+        username = "FIP Metal"
+
     if timeframe == "7day":
         start = begin_time - datetime.timedelta(weeks=1)
         timeframe = f"for the week of {start.strftime('%B %d %Y')}"

@@ -3,7 +3,6 @@ from tqdm import tqdm
 from PIL import Image
 from io import BytesIO
 import logging
-import numpy as np
 
 logger = logging.getLogger(__name__)
 logging.getLogger("requests").setLevel(logging.WARNING)
@@ -36,17 +35,9 @@ def get_cover_for_album(index, album):
                 break
     if url:
         logger.debug("URL : %s", url)
-        if url.endswith(".png"):
+        if url.endswith(".png") or url.endswith(".jpg"):
             img = requests.get(url).content
             if img:
-                image = np.asarray(Image.open(BytesIO(img)))
-                logger.debug("Shape image : %s.", image.shape)
-                try:
-                    if image.shape[2] != 4:
-                        return None
-                except Exception as e:
-                    logger.debug(e)
-                    return None
                 try:
                     Image.open(BytesIO(img)).seek(1)
                 except EOFError:
@@ -58,8 +49,8 @@ def get_cover_for_album(index, album):
                 # link returned by get_cover_image() doesn't work
                 logger.warning("No image returned by url %s", url)
         else:
+            # url doesn't host a png or jpg image
             logger.warning("Wrong filetype for %s", url)
-            # url doesn't host a png image
     else:
         # no url returned by get_cover_image()
         logger.warning("No cover image found for %s - %s", index, album.item)

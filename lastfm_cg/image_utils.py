@@ -16,7 +16,7 @@ def chunks(l, n):
 
 def create_image(list_covers, nb_columns):
     # create image from list_covers with nb_columns columns
-    imgs = [Image.open(BytesIO(i)) for i in list_covers]
+    imgs = [Image.open(BytesIO(i)).convert("RGB") for i in list_covers]
 
     min_shape = sorted([(np.sum(i.size), i.size) for i in imgs])[0][1]
 
