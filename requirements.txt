@@ -1,12 +1,12 @@
 -i https://pypi.org/simple
 -e .
-certifi==2020.4.5.1
+certifi==2020.6.20
 chardet==3.0.4
-idna==2.9
-numpy==1.18.4
-pillow==7.1.2
-pylast==3.2.1
+idna==2.10; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+numpy==1.19.2; python_version >= '3.6'
+pillow==7.2.0; python_version >= '3.5'
+pylast==3.3.0; python_version >= '3.5'
 requests-cache==0.5.2
-requests==2.23.0
-tqdm==4.46.0
-urllib3==1.25.9
+requests==2.24.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
+tqdm==4.49.0; python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'
+urllib3==1.25.10; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'
