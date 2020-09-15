@@ -9,7 +9,7 @@ pytest = "*"
 
 [packages]
 e1839a8 = {editable = true,path = "."}
-lastfm-cg = {editable = true,path = "."}
+lastfm-cg = {editable = true, path = "."}
 
 [requires]
 python_version = "3.8"
