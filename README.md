@@ -8,13 +8,13 @@
 
 Generate covers collage from albums listened by a lastfm user.
 
-This utility needs a valid config file with your lastfm API keys (get them at [last.fm/api](https://www.last.fm/api).) in ~/.config/lastfm_cg/config.ini (see config_sample.ini for an example).
+This utility needs a valid config file with your lastfm API keys (get them at [last.fm/api](https://www.last.fm/api).) in `~/.config/lastfm_cg/config.ini` (the config file will be created at first launch, you can also see `config_sample.ini` for an example).
 
-It also caches the image files requested thanks to the requests-cache library. If you don't want the script to create an sqlite file in your ~/.local/share/lastfm_cg/ directory, you will have to launch the script with the -d/--disable_cache flag.
+It also caches the image files downloaded thanks to the *requests-cache* library. If you don't want the script to create an sqlite file in your `~/.local/share/lastfm_cg/` directory, you will have to launch the script with the `-d/--disable_cache` flag.
 
-A twitter bot and a mastodon post are also available in the bot_lastfm_cg folder.
+A twitter bot and a mastodon bot are also available in the bot_lastfm_cg folder. You can see them in action on my own [Twitter](https://www.twitter.com/d_beley) and [Mastodon](https://mamot.fr/web/accounts/79776) accounts.
 
-Some systemd service are also available int the systemd-service directory to run the lastfm_cg script at a given time. You will have to change them to match your configuration, more specifically the WorkingDirectory and ExecStart directive.
+Some systemd service are also available in the systemd-service directory to run the lastfm_cg script at a given time. You will have to change them to match your configuration, more specifically the `WorkingDirectory` and `ExecStart` directive.
 
 ## Requirements
 
@@ -70,7 +70,7 @@ optional arguments:
                         Usernames to extract, separated by comma.
   -d, --disable_cache   Disable the cache
 ```
- 
+
 Generate a collage for the user USER of the size 5x5 for the last 7 days (default values).
 
 ```
@@ -95,4 +95,4 @@ lastfm_cg --username USER,USER2 --timeframe overall --rows 3 --columns 30
 cp systemd-service/* ~/.config/systemd/user/
 systemctl --user daemon-reload
 systemctl --user enable --now lastfm_cg_weekly.timer
-``` 
+```
