@@ -70,8 +70,9 @@ def lastfmconnect(api_key=None, api_secret=None):
 def main():
     # argument parsing
     args = parse_args()
+
     if args.API_KEY and args.API_SECRET:
-        network = lastfmconnect(args.API_KEY, args.API_SECRET)
+        network = lastfmconnect(api_key=args.API_KEY, api_secret=args.API_SECRET)
     else:
         network = lastfmconnect()
 
@@ -89,7 +90,7 @@ def main():
                 os.chdir(cache_folder)
                 requests_cache.install_cache("lastfm_cg_cache")
                 os.chdir(original_folder)
-    requests_cache.configure(os.path.expanduser(cache_folder + "lastfm_cg_cache"))
+        requests_cache.configure(os.path.expanduser(cache_folder + "lastfm_cg_cache"))
 
     if args.username:
         users = [x.strip() for x in args.username.split(",")]
