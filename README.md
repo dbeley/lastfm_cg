@@ -9,6 +9,7 @@
 Generate covers collage from albums listened by a lastfm user.
 
 This utility needs a valid config file with your lastfm API keys (get them at [last.fm/api](https://www.last.fm/api).) in `~/.config/lastfm_cg/config.ini` (the config file will be created at first launch, you can also see `config_sample.ini` for an example).
+ You can also use the `--API_KEY` and `--API_SECRET` argument to set your lastfm API key.
 
 It also caches the image files downloaded thanks to the *requests-cache* library. If you don't want the script to create an sqlite file in your `~/.local/share/lastfm_cg/` directory, you will have to launch the script with the `-d/--disable_cache` flag.
 
@@ -54,6 +55,8 @@ lastfm_cg -h
 ```
 usage: lastfm_cg [-h] [--debug] [--timeframe TIMEFRAME] [--rows ROWS]
                  [--columns COLUMNS] [--username USERNAME] [-d]
+                 [--API_KEY API_KEY] [--API_SECRET API_SECRET]
+                 [--output_filename OUTPUT_FILENAME]
 
 Create lastfm album collage for one or several lastfm users.
 
@@ -69,6 +72,11 @@ optional arguments:
   --username USERNAME, -u USERNAME
                         Usernames to extract, separated by comma.
   -d, --disable_cache   Disable the cache
+  --API_KEY API_KEY     Lastfm API key (optional)
+  --API_SECRET API_SECRET
+                        Lastfm API secret (optional)
+  --output_filename OUTPUT_FILENAME
+                        Output filename (optional, example: output.png)
 ```
 
 Generate a collage for the user USER of the size 5x5 for the last 7 days (default values).

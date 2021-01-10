@@ -5,6 +5,6 @@
 Generate covers collage from album listened by a lastfm user.
 """
 
-__version__ = "1.4.1"
+__version__ = "1.5.0"
 
 name = "lastfm_cg"

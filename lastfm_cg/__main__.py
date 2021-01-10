@@ -20,55 +20,60 @@ FORMAT = "%(levelname)s :: %(message)s"
 TIMEFRAME_VALUES = ["7day", "1month", "3month", "6month", "12month", "overall"]
 
 
-def lastfmconnect():
-    # Lastfm config file parsing
-    user_config_dir = os.path.expanduser("~/.config/lastfm_cg/")
-    try:
-        config = configparser.ConfigParser()
-        config.read(user_config_dir + "config.ini")
-        api_key = config["lastfm"]["api_key"]
-        api_secret = config["lastfm"]["api_secret"]
-    except Exception as e:
-        logger.error(
-            (
-                "Error with the config file. Be sure to have a valid "
-                "~/.config/lastfm_cg/config.ini file. Error : %s"
-            ),
-            e,
-        )
-        if not os.path.exists(user_config_dir):
-            logger.info(
+def lastfmconnect(api_key=None, api_secret=None):
+    if api_key and api_secret:
+        network = pylast.LastFMNetwork(api_key=api_key, api_secret=api_secret)
+        return network
+    else:
+        # Lastfm config file parsing
+        user_config_dir = os.path.expanduser("~/.config/lastfm_cg/")
+        try:
+            config = configparser.ConfigParser()
+            config.read(user_config_dir + "config.ini")
+            api_key = config["lastfm"]["api_key"]
+            api_secret = config["lastfm"]["api_secret"]
+        except Exception as e:
+            logger.error(
                 (
-                    "Configuration folder not found. "
-                    "Creating ~/.config/lastfm_cg/."
+                    "Error with the config file. Be sure to have a valid "
+                    "~/.config/lastfm_cg/config.ini file. Error : %s"
+                ),
+                e,
+            )
+            if not os.path.exists(user_config_dir):
+                logger.info(
+                    (
+                        "Configuration folder not found. "
+                        "Creating ~/.config/lastfm_cg/."
+                    )
                 )
-            )
-            os.makedirs(user_config_dir)
-        if not os.path.isfile(user_config_dir + "config.ini"):
-            sample_config = (
-                "[lastfm]\n"
-                "api_key=api_key_here\n"
-                "api_secret=api_secret_here\n"
-            )
-            with open(user_config_dir + "config.ini", "w") as f:
-                f.write(sample_config)
-            logger.info(
-                (
-                    "A sample configuration file has been created at "
-                    "~/.config/lastfm_cg/config.ini. Go to "
-                    "https://www.last.fm/api to create your own API keys "
-                    "and put them in the configuration file."
+                os.makedirs(user_config_dir)
+            if not os.path.isfile(user_config_dir + "config.ini"):
+                sample_config = (
+                    "[lastfm]\n" "api_key=api_key_here\n" "api_secret=api_secret_here\n"
                 )
-            )
-        exit()
-    network = pylast.LastFMNetwork(api_key=api_key, api_secret=api_secret)
-    return network
+                with open(user_config_dir + "config.ini", "w") as f:
+                    f.write(sample_config)
+                logger.info(
+                    (
+                        "A sample configuration file has been created at "
+                        "~/.config/lastfm_cg/config.ini. Go to "
+                        "https://www.last.fm/api to create your own API keys "
+                        "and put them in the configuration file."
+                    )
+                )
+            exit()
+        network = pylast.LastFMNetwork(api_key=api_key, api_secret=api_secret)
+        return network
 
 
 def main():
     # argument parsing
     args = parse_args()
-    network = lastfmconnect()
+    if args.API_KEY and args.API_SECRET:
+        network = lastfmconnect(args.API_KEY, args.API_SECRET)
+    else:
+        network = lastfmconnect()
 
     if not args.columns:
         args.columns = args.rows
@@ -84,9 +89,7 @@ def main():
                 os.chdir(cache_folder)
                 requests_cache.install_cache("lastfm_cg_cache")
                 os.chdir(original_folder)
-    requests_cache.configure(
-        os.path.expanduser(cache_folder + "lastfm_cg_cache")
-    )
+    requests_cache.configure(os.path.expanduser(cache_folder + "lastfm_cg_cache"))
 
     if args.username:
         users = [x.strip() for x in args.username.split(",")]
@@ -115,12 +118,13 @@ def main():
         list_covers = lastfm_utils.get_list_covers(
             user=user, nb_covers=nb_covers, timeframe=args.timeframe
         )
-        img = image_utils.create_image(
-            list_covers=list_covers, nb_columns=args.columns
-        )
+        img = image_utils.create_image(list_covers=list_covers, nb_columns=args.columns)
 
         # export image
-        export_filename = f"{args.timeframe}_{username}_{args.columns*args.rows:004}_{int(time.time())}.png"
+        if args.output_filename:
+            export_filename = args.output_filename
+        else:
+            export_filename = f"{args.timeframe}_{username}_{args.columns*args.rows:004}_{int(time.time())}.png"
         img.save(export_filename)
 
     logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
@@ -173,6 +177,11 @@ def parse_args():
         help="Disable the cache",
         dest="disable_cache",
         action="store_true",
+    )
+    parser.add_argument("--API_KEY", help="Lastfm API key (optional)")
+    parser.add_argument("--API_SECRET", help="Lastfm API secret (optional)")
+    parser.add_argument(
+        "--output_filename", help="Output filename (optional, example: output.png)"
     )
     parser.set_defaults(disable_cache=False)
     args = parser.parse_args()
