@@ -1,7 +1,7 @@
 # lastfm_cg : lastfm collage generator
 
-[![Build Status](https://travis-ci.com/dbeley/lastfm_cg.svg?branch=master)](https://travis-ci.com/dbeley/lastfm_cg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0ee651b54bfd40d4aeece00298dd3fd0)](https://app.codacy.com/app/dbeley/lastfm_cg?utm_source=github.com&utm_medium=referral&utm_content=dbeley/lastfm_cg&utm_campaign=Badge_Grade_Dashboard)
+![Build Status](https://github.com/dbeley/lastfm_cg/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/dbeley/lastfm_cg/branch/master/graph/badge.svg)](https://codecov.io/gh/dbeley/lastfm_cg)
 
 <a href="docs/1month_2x3.png"><img src="docs/1month_2x3.png" width="390" height="260"/></a>
