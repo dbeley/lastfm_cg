@@ -6,16 +6,16 @@
 
 <a href="docs/1month_2x3.png"><img src="docs/1month_2x3.png" width="390" height="260"/></a>
 
-Generate covers collage from albums listened by a lastfm user.
+Generate album collage from a lastfm user history.
 
 This utility needs a valid config file with your lastfm API keys (get them at [last.fm/api](https://www.last.fm/api).) in `~/.config/lastfm_cg/config.ini` (the config file will be created at first launch, you can also see `config_sample.ini` for an example).
  You can also use the `--API_KEY` and `--API_SECRET` argument to set your lastfm API key.
 
-It also caches the image files downloaded thanks to the *requests-cache* library. If you don't want the script to create an sqlite file in your `~/.local/share/lastfm_cg/` directory, you will have to launch the script with the `-d/--disable_cache` flag.
+It also caches the image files downloaded thanks to the *requests-cache* library. If you don't want the script to create an sqlite file in `~/.local/share/lastfm_cg/`, you will have to run the script with the `-d/--disable_cache` flag.
 
 A twitter bot and a mastodon bot are also available in the bot_lastfm_cg folder. You can see them in action on my own [Twitter](https://www.twitter.com/d_beley) and [Mastodon](https://mamot.fr/web/accounts/79776) accounts.
 
-Some systemd service are also available in the systemd-service directory to run the lastfm_cg script at a given time. You will have to change them to match your configuration, more specifically the `WorkingDirectory` and `ExecStart` directive.
+Some systemd service are also available in the systemd-service directory to run the lastfm_cg script at a given time (more information below).
 
 ## Requirements
 
@@ -124,9 +124,9 @@ lastfm_cg --username USER,USER2 --rows 3 --columns 30 --timeframe overall
 
 <a href="docs/overall_5x8.png"><img src="docs/overall_5x8.png" width="800" height="500"/></a>
 
-### top 100
+### Top 100
 
-<a href="docs/12month_top100.png"><img src="docs/12month_top100.png" width="1000" height="965"/></a>
+<a href="docs/12month_top100.png"><img src="docs/12month_top100.png" width="800"/></a>
 
 ## Systemd service
 
