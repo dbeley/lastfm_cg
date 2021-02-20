@@ -28,14 +28,6 @@ Some systemd service are also available in the systemd-service directory to run 
 
 ## Installation
 
-Installation in a virtualenv with pipenv (recommended) :
-
-```
-git clone https://github.com/dbeley/lastfm_cg
-cd lastfm_cg
-pipenv install '-e .'
-```
-
 Classic installation :
 
 ```
@@ -43,6 +35,26 @@ pip install lastfm_cg
 ```
 
 If you are an Archlinux user, you can install the AUR package [lastfm_cg-git](https://aur.archlinux.org/packages/lastfm_cg-git).
+
+### Run from source
+
+#### First method (installing the lastfm_cg package)
+
+```
+git clone https://github.com/dbeley/lastfm_cg
+cd lastfm_cg
+python setup.py install
+lastfm_cg -h
+```
+
+#### Second method (installing the lastfm_cg package with pipenv)
+
+```
+git clone https://github.com/dbeley/lastfm_cg
+cd lastfm_cg
+pipenv install '-e .'
+pipenv run lastfm_cg -h
+```
 
 ## Usage
 
@@ -54,7 +66,7 @@ lastfm_cg -h
 
 ```
 usage: lastfm_cg [-h] [--debug] [--timeframe TIMEFRAME] [--rows ROWS]
-                 [--columns COLUMNS] [--username USERNAME] [-d]
+                 [--columns COLUMNS] [--username USERNAME] [-d] [--top100]
                  [--API_KEY API_KEY] [--API_SECRET API_SECRET]
                  [--output_filename OUTPUT_FILENAME]
 
@@ -72,6 +84,7 @@ optional arguments:
   --username USERNAME, -u USERNAME
                         Usernames to extract, separated by comma.
   -d, --disable_cache   Disable the cache
+  --top100              Create a top 100 image. Will override columns/rows.
   --API_KEY API_KEY     Lastfm API key (optional)
   --API_SECRET API_SECRET
                         Lastfm API secret (optional)
@@ -86,18 +99,38 @@ lastfm_cg -u USER
 lastfm_cg -u USER -t 7day -r 5
 ```
 
+Generate a collage for the user USER of the size 10x8 for the last year.
+
+```
+lastfm_cg -u USER -t 12month -r 10 -c 8
+```
+
+Generate a top 100 collage for the user USER for all its listening history.
+
+```
+lastfm_cg -u USER --top100 -t overall
+```
+
 Generate collages for the users USER and USER2 of the size 3x30 for all their listening history.
 
 ```
 lastfm_cg -u USER,USER2 -t overall -r 3 -c 30
-lastfm_cg --username USER,USER2 --timeframe overall --rows 3 --columns 30
+lastfm_cg --username USER,USER2 --rows 3 --columns 30 --timeframe overall
 ```
 
 ## Sample results
 
+### 5 rows x 8 columns
+
 <a href="docs/overall_5x8.png"><img src="docs/overall_5x8.png" width="800" height="500"/></a>
 
+### top 100
+
+<a href="docs/12month_top100.png"><img src="docs/12month_top100.png" width="1000" height="965"/></a>
+
 ## Systemd service
+
+You will have to change the command executed with the systemd service (`ExecStart` option) and the working directory (`WorkingDirectory` option).
 
 ```
 cp systemd-service/* ~/.config/systemd/user/
