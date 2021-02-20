@@ -105,25 +105,27 @@ def main():
             TIMEFRAME_VALUES,
         )
         exit()
-    if not isinstance(args.rows, int):
-        logger.error("Incorrect value %s for number of rows.", args.columns)
-        exit()
-    if not isinstance(args.columns, int):
-        logger.error("Incorrect value %s for number of columns.", args.columns)
-        exit()
 
     for username in users:
         user = network.get_user(username)
 
-        nb_covers = args.rows * args.columns
+        nb_covers = args.rows * args.columns if not args.top100 else 100
         list_covers = lastfm_utils.get_list_covers(
             user=user, nb_covers=nb_covers, timeframe=args.timeframe
         )
-        img = image_utils.create_image(list_covers=list_covers, nb_columns=args.columns)
+        img = (
+            image_utils.create_image(list_covers=list_covers, nb_columns=args.columns)
+            if not args.top100
+            else image_utils.create_top100_image(list_covers=list_covers)
+        )
 
         # export image
         if args.output_filename:
             export_filename = args.output_filename
+        elif args.top100:
+            export_filename = (
+                f"{args.timeframe}_{username}_top100_{int(time.time())}.png"
+            )
         else:
             export_filename = f"{args.timeframe}_{username}_{args.columns*args.rows:004}_{int(time.time())}.png"
         img.save(export_filename)
@@ -177,6 +179,12 @@ def parse_args():
         "--disable_cache",
         help="Disable the cache",
         dest="disable_cache",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--top100",
+        help="Create a top 100 image. Will override columns/rows.",
+        dest="top100",
         action="store_true",
     )
     parser.add_argument("--API_KEY", help="Lastfm API key (optional)")
