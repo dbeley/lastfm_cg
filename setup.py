@@ -13,7 +13,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/dbeley/lastfm_cg",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=["docs", "tests"]),
     include_package_data=True,
     entry_points={"console_scripts": ["lastfm_cg=lastfm_cg.__main__:main"]},
     classifiers=[

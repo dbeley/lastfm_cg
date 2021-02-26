@@ -29,13 +29,13 @@ def test_get_list_covers(network_lastfm):
         raise AssertionError()
 
 
-# def test_album_gif(network_lastfm):
-#     album = network_lastfm.get_album("Weezer", "Pinkerton")
-#     top_list = EmulateTopListItem(album)
-# 
-#     cover = lastfm_utils.get_cover_for_album(1, top_list)
-#     if cover is not None:
-#         raise AssertionError()
+def test_album_gif(network_lastfm):
+    album = network_lastfm.get_album("Weezer", "Pinkerton - Deluxe Edition")
+    top_list = EmulateTopListItem(album)
+
+    cover = lastfm_utils.get_cover_for_album(1, top_list)
+    if cover is not None:
+        raise AssertionError()
 
 
 def test_album_unavailable(network_lastfm):

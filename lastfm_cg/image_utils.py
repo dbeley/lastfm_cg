@@ -36,11 +36,43 @@ def create_image(list_covers, nb_columns):
             i += 1
             logger.debug("Missing album cover. Creating empty square %s.", i)
             list_arrays.append(
-                np.asarray(
-                    np.zeros((min_shape[0], min_shape[1], 4), dtype=np.uint8)
-                )
+                np.asarray(np.zeros((min_shape[0], min_shape[1], 4), dtype=np.uint8))
             )
         logger.debug("len list_arrays : %s.", len(list_arrays))
+        list_comb.append(np.hstack(list_arrays))
+
+    # combine rows to create image
+    list_comb_arrays = [np.asarray(i) for i in list_comb]
+    imgs_comb = np.vstack(list_comb_arrays)
+    imgs_comb = Image.fromarray(imgs_comb)
+    return imgs_comb
+
+
+def create_top100_image(list_covers):
+    # for now the number of column on each row must be a multiple of the first element to work properly
+    list_columns = [5, 5, 10, 10, 10, 15, 15, 15, 15]
+    imgs = [Image.open(BytesIO(i)).convert("RGB") for i in list_covers]
+
+    min_shape = sorted([(np.sum(i.size), i.size) for i in imgs])[0][1]
+
+    logger.info("Creating image.")
+    logger.debug(
+        "Image : %s columns, 100 covers. min_shape : %s.",
+        len(list_covers),
+        min_shape,
+    )
+
+    list_comb = []
+    i = 0
+    chunks = []
+
+    for chunksize in list_columns:
+        chunks.append(imgs[i : i + chunksize])
+        i += chunksize
+
+    for row in chunks:
+        shape = (int(min_shape[0] / (len(row) / 5)), int(min_shape[1] / (len(row) / 5)))
+        list_arrays = [np.asarray(i.resize(shape)) for i in row]
         list_comb.append(np.hstack(list_arrays))
 
     # combine rows to create image
