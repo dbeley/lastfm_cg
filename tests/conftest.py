@@ -9,7 +9,7 @@ def load_config():
     secrets_file = user_config_dir + "config.ini"
     if os.path.isfile(secrets_file):
         config = configparser.ConfigParser()
-        config.read(user_config_dir + "config.ini")
+        config.read(secrets_file)
         api_key = config["lastfm"]["api_key"]
         api_secret = config["lastfm"]["api_secret"]
     else:
