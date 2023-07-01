@@ -1,0 +1,17 @@
+-i https://pypi.org/simple
+blurhash==1.1.4
+-e .
+certifi==2023.5.7 ; python_version >= '3.6'
+charset-normalizer==3.1.0 ; python_full_version >= '3.7.0'
+decorator==5.1.1 ; python_version >= '3.5'
+idna==3.4 ; python_version >= '3.5'
+mastodon.py==1.8.1
+oauthlib==3.2.2 ; python_version >= '3.6'
+pillow==10.0.0 ; python_version >= '3.8'
+python-dateutil==2.8.2 ; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+python-magic==0.4.27 ; platform_system != 'Windows'
+requests==2.31.0 ; python_version >= '3.7'
+requests-oauthlib==1.3.1 ; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+six==1.16.0 ; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+tweepy==4.14.0 ; python_version >= '3.7'
+urllib3==2.0.3 ; python_version >= '3.7'

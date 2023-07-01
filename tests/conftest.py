@@ -18,8 +18,7 @@ def load_config():
             api_secret = os.environ["PYLAST_API_SECRET"].strip()
         except Exception as e:
             print(e)
-            print("Problem while loading the config")
-            exit()
+            raise Exception("Problem while loading the config")
     return api_key, api_secret
 
 

@@ -12,3 +12,6 @@ temp.png
 archives/
 DONE_*.txt
 build/
+venv/
+.direnv/
+.env

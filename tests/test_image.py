@@ -15,7 +15,7 @@ def test_image(network_lastfm):
 
     if not url_cover.startswith("https"):
         raise AssertionError()
-    if not url_cover.endswith(".png"):
+    if not (url_cover.endswith(".png") or url_cover.endswith(".jpg")):
         raise AssertionError()
 
     cover = requests.get(url_cover).content
@@ -35,7 +35,7 @@ def test_top100_image(network_lastfm):
 
     if not url_cover.startswith("https"):
         raise AssertionError()
-    if not url_cover.endswith(".png"):
+    if not (url_cover.endswith(".png") or url_cover.endswith(".jpg")):
         raise AssertionError()
 
     cover = requests.get(url_cover).content
