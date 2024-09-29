@@ -11,8 +11,6 @@ Generate album collage from a lastfm user history.
 This utility needs a valid config file with your lastfm API keys (get them at [last.fm/api](https://www.last.fm/api).) in `~/.config/lastfm_cg/config.ini` (the config file will be created at first launch, you can also see `config_sample.ini` for an example).
  You can also use the `--API_KEY` and `--API_SECRET` argument to set your lastfm API key.
 
-It also caches the image files downloaded thanks to the *requests-cache* library. If you don't want the script to create an sqlite file in `~/.local/share/lastfm_cg/`, you will have to run the script with the `-d/--disable_cache` flag.
-
 A twitter bot and a mastodon bot are also available in the bot_lastfm_cg folder. You can see them in action on my own [Twitter](https://www.twitter.com/d_beley) and [Mastodon](https://mamot.fr/web/accounts/79776) accounts.
 
 Some systemd service are also available in the systemd-service directory to run the lastfm_cg script at a given time (more information below).
@@ -23,7 +21,6 @@ Some systemd service are also available in the systemd-service directory to run 
 - numpy
 - pillow
 - requests
-- requests-cache
 - tqdm
 
 ## Installation
@@ -38,22 +35,11 @@ If you are an Archlinux user, you can install the AUR package [lastfm_cg-git](ht
 
 ### Run from source
 
-#### First method (installing the lastfm_cg package)
-
 ```
 git clone https://github.com/dbeley/lastfm_cg
 cd lastfm_cg
 python setup.py install
 lastfm_cg -h
-```
-
-#### Second method (installing the lastfm_cg package with pipenv)
-
-```
-git clone https://github.com/dbeley/lastfm_cg
-cd lastfm_cg
-pipenv install '-e .'
-pipenv run lastfm_cg -h
 ```
 
 ## Usage
@@ -66,7 +52,7 @@ lastfm_cg -h
 
 ```
 usage: lastfm_cg [-h] [--debug] [--timeframe TIMEFRAME] [--rows ROWS]
-                 [--columns COLUMNS] [--username USERNAME] [-d] [--top100]
+                 [--columns COLUMNS] [--username USERNAME] [--top100]
                  [--API_KEY API_KEY] [--API_SECRET API_SECRET]
                  [--output_filename OUTPUT_FILENAME]
 
@@ -83,7 +69,6 @@ optional arguments:
                         Number of columns (Default : number of rows).
   --username USERNAME, -u USERNAME
                         Usernames to extract, separated by comma.
-  -d, --disable_cache   Disable the cache
   --top100              Create a top 100 image. Will override columns/rows.
   --API_KEY API_KEY     Lastfm API key (optional)
   --API_SECRET API_SECRET

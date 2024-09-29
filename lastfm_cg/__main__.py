@@ -1,12 +1,12 @@
 """
 Create lastfm album collage for an user
 """
+
 import logging
 import time
 import argparse
 import configparser
 import pylast
-import requests_cache
 import os
 from lastfm_cg import image_utils
 from lastfm_cg import lastfm_utils
@@ -67,6 +67,16 @@ def lastfmconnect(api_key=None, api_secret=None):
         return network
 
 
+def get_lastfm_collage(user, timeframe, rows, columns, top100):
+    if top100:
+        list_covers = lastfm_utils.get_list_covers(user, 100, timeframe)
+        image = image_utils.create_top100_image(list_covers)
+    else:
+        list_covers = lastfm_utils.get_list_covers(user, rows * columns, timeframe)
+        image = image_utils.create_image(list_covers, columns)
+    return image
+
+
 def main():
     # argument parsing
     args = parse_args()
@@ -78,19 +88,6 @@ def main():
 
     if not args.columns:
         args.columns = args.rows
-
-    # cache for python-requests
-    if not args.disable_cache:
-        cache_folder = os.path.expanduser("~/.local/share/lastfm_cg/")
-        if not os.path.exists(cache_folder):
-            logger.info("Cache folder not found. Creating %s", cache_folder)
-            os.makedirs(cache_folder)
-            if not os.path.isfile(cache_folder + "lastfm_cg_cache.sqlite"):
-                original_folder = os.getcwd()
-                os.chdir(cache_folder)
-                requests_cache.install_cache("lastfm_cg_cache")
-                os.chdir(original_folder)
-        requests_cache.configure(os.path.expanduser(cache_folder + "lastfm_cg_cache"))
 
     if args.username:
         users = [x.strip() for x in args.username.split(",")]
@@ -110,13 +107,9 @@ def main():
         user = network.get_user(username)
 
         nb_covers = args.rows * args.columns if not args.top100 else 100
-        list_covers = lastfm_utils.get_list_covers(
-            user=user, nb_covers=nb_covers, timeframe=args.timeframe
-        )
-        img = (
-            image_utils.create_image(list_covers=list_covers, nb_columns=args.columns)
-            if not args.top100
-            else image_utils.create_top100_image(list_covers=list_covers)
+
+        img = get_lastfm_collage(
+            user, args.timeframe, args.rows, args.columns, args.top100
         )
 
         # export image
@@ -175,13 +168,6 @@ def parse_args():
         type=str,
     )
     parser.add_argument(
-        "-d",
-        "--disable_cache",
-        help="Disable the cache",
-        dest="disable_cache",
-        action="store_true",
-    )
-    parser.add_argument(
         "--top100",
         help="Create a top 100 image. Will override columns/rows.",
         dest="top100",
@@ -192,7 +178,6 @@ def parse_args():
     parser.add_argument(
         "--output_filename", help="Output filename (optional, example: output.png)"
     )
-    parser.set_defaults(disable_cache=False)
     args = parser.parse_args()
 
     logging.basicConfig(level=args.loglevel, format=FORMAT)

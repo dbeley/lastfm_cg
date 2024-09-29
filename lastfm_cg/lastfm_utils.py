@@ -26,8 +26,7 @@ def get_cover_for_album(index, album):
             )
             if nb_tries > 4:
                 logger.warning(
-                    "Couldn't retrieve cover url for %s - %s after "
-                    "4 tries.",
+                    "Couldn't retrieve cover url for %s - %s after " "4 tries.",
                     index,
                     album.item,
                 )
@@ -84,9 +83,7 @@ def get_list_covers(user, nb_covers, timeframe):
                 "Adding %s albums to the grid.",
                 nb_failed,
             )
-        logger.info(
-            "Retrieving top %s albums covers for %s.", limit, str(user)
-        )
+        logger.info("Retrieving top %s albums covers for %s.", limit, str(user))
         if limit > 1000:
             logger.error(
                 "Can't extract more than 1000 albums. "
