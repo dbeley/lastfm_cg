@@ -11,7 +11,6 @@ in pkgs.mkShell rec {
     pythonPackages.numpy
     pythonPackages.pandas
     pythonPackages.requests
-    pythonPackages.requests-cache
     pythonPackages.pylast
     pythonPackages.tqdm
     pythonPackages.pillow

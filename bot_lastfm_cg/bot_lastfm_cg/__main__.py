@@ -94,9 +94,7 @@ def process_image(image, title, social_media, done_filename):
         size = 1024, 1024
         while True & size[0] > 10:
             try:
-                logger.info(
-                    "Image too big. Trying resize at size %s.", size[0]
-                )
+                logger.info("Image too big. Trying resize at size %s.", size[0])
                 im = Image.open(image)
                 im.thumbnail(size)
                 im.save("temp.png", "PNG")
@@ -226,11 +224,7 @@ def main():
                 logger.info("Image %s not already posted.", image.name)
                 if args.no_upload:
                     logger.info(
-                        (
-                            "No posting mode activated.\n"
-                            "File : %s\n"
-                            "message : %s\n"
-                        ),
+                        ("No posting mode activated.\n" "File : %s\n" "message : %s\n"),
                         image.name,
                         title,
                     )
@@ -240,9 +234,7 @@ def main():
                     if social_media in ["mastodon", "all"]:
                         process_image(image, title, "mastodon", done_filename)
             else:
-                logger.info(
-                    "Image %s already posted or timeframe invalid.", image.name
-                )
+                logger.info("Image %s already posted or timeframe invalid.", image.name)
         except Exception as e:
             logger.error(e)
 

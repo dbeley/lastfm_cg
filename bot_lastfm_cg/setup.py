@@ -15,9 +15,7 @@ setuptools.setup(
     url="https://github.com/dbeley/lastfm_cg/bot_lastfm_cg",
     packages=setuptools.find_packages(),
     include_package_data=True,
-    entry_points={
-        "console_scripts": ["bot_lastfm_cg=bot_lastfm_cg.__main__:main"]
-    },
+    entry_points={"console_scripts": ["bot_lastfm_cg=bot_lastfm_cg.__main__:main"]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: POSIX :: Linux",

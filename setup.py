@@ -25,7 +25,6 @@ setuptools.setup(
         "numpy",
         "pillow",
         "requests",
-        "requests-cache",
         "tqdm",
     ],
 )

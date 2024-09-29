@@ -15,7 +15,6 @@ depends=(
         'python-numpy'
         'python-pylast'
         'python-requests'
-        'python-requests-cache'
         'python-tqdm'
         )
 source=("git+https://github.com/dbeley/${pkgname%-git}")
