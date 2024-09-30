@@ -8,8 +8,8 @@ import argparse
 import configparser
 import pylast
 import os
-from lastfm_cg import image_utils
-from lastfm_cg import lastfm_utils
+from . import image_utils
+from . import lastfm_utils
 
 logger = logging.getLogger()
 logging.getLogger("requests").setLevel(logging.WARNING)
