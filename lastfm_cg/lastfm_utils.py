@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("PIL").setLevel(logging.WARNING)
 
-TOP_ALBUMS_LIMIT=1000
+TOP_ALBUMS_LIMIT = 1000
 
 
 def get_cover_for_album(index: int, album):
@@ -87,7 +87,9 @@ def get_list_covers(user, nb_covers: int, timeframe: str):
             )
         logger.info("Retrieving top %s albums covers for %s.", limit, str(user))
         if limit >= TOP_ALBUMS_LIMIT:
-            raise ValueError(f"Can't extract more than {TOP_ALBUMS_LIMIT} albums. Choose smaller number of rows/columns.")
+            raise ValueError(
+                f"Can't extract more than {TOP_ALBUMS_LIMIT} albums. Choose smaller number of rows/columns."
+            )
         top_albums = user.get_top_albums(period=timeframe, limit=limit)
         if len(top_albums) != limit:
             raise ValueError(
