@@ -8,8 +8,10 @@ logger = logging.getLogger(__name__)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("PIL").setLevel(logging.WARNING)
 
+TOP_ALBUMS_LIMIT=1000
 
-def get_cover_for_album(index, album):
+
+def get_cover_for_album(index: int, album):
     # returns an img object for an album or None
     nb_tries = 0
     while True:
@@ -67,7 +69,7 @@ def extract_covers_from_top_albums(top_albums):
     return list_covers
 
 
-def get_list_covers(user, nb_covers, timeframe):
+def get_list_covers(user, nb_covers: int, timeframe: str):
     # extract the top available covers for the specified timeframe and user
     nb_failed = 0
     nb_failed_global = 0
@@ -84,19 +86,14 @@ def get_list_covers(user, nb_covers, timeframe):
                 nb_failed,
             )
         logger.info("Retrieving top %s albums covers for %s.", limit, str(user))
-        if limit > 1000:
-            logger.error(
-                "Can't extract more than 1000 albums. "
-                "Choose smaller number of rows/columns."
-            )
-            exit()
+        if limit >= TOP_ALBUMS_LIMIT:
+            raise ValueError(f"Can't extract more than {TOP_ALBUMS_LIMIT} albums. Choose smaller number of rows/columns.")
         top_albums = user.get_top_albums(period=timeframe, limit=limit)
         if len(top_albums) != limit:
-            logger.error(
+            raise ValueError(
                 "Not enough albums played in the selected timeframe. "
                 "Choose a lower rows/columns value or another timeframe."
             )
-            exit()
         top_albums = top_albums[-nb_failed:]
         logger.debug("len(top_albums) : %s", len(top_albums))
         nb_failed = 0

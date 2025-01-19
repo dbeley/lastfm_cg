@@ -92,16 +92,13 @@ def main():
     if args.username:
         users = [x.strip() for x in args.username.split(",")]
     else:
-        logger.error("Use the -u/--username flag to set an username.")
-        exit()
-
+        raise ValueError("Use the -u/--username flag to set an username.")
     if args.timeframe not in TIMEFRAME_VALUES:
-        logger.error(
+        raise ValueError(
             "Incorrect value %s for timeframe. Accepted values : %s",
             args.columns,
             TIMEFRAME_VALUES,
         )
-        exit()
 
     for username in users:
         user = network.get_user(username)
