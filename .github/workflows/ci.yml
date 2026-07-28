@@ -37,4 +37,4 @@ jobs:
       env:
         PYLAST_API_KEY: ${{ secrets.PYLAST_API_KEY }}
         PYLAST_API_SECRET: ${{ secrets.PYLAST_API_SECRET }}
-    - uses: codecov/codecov-action@v5
+    - uses: codecov/codecov-action@v4
