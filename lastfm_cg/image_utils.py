@@ -1,17 +1,18 @@
+import logging
+from io import BytesIO
+
 import numpy as np
 from PIL import Image
-from io import BytesIO
-import logging
 
 logger = logging.getLogger(__name__)
 logging.getLogger("PIL").setLevel(logging.WARNING)
 logging.getLogger("numpy").setLevel(logging.WARNING)
 
 
-def chunks(l, n):
-    # generator of chunks of size l for a iterable n
-    for i in range(0, len(l), n):
-        yield l[i : i + n]
+def chunks(lst, n):
+    # generator of chunks of size n for a iterable lst
+    for i in range(0, len(lst), n):
+        yield lst[i : i + n]
 
 
 def create_image(list_covers, nb_columns):

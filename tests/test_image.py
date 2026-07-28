@@ -1,4 +1,5 @@
 import requests
+
 from lastfm_cg import image_utils
 
 
