@@ -1,5 +1,6 @@
 import configparser
 import os
+
 import pylast
 import pytest
 

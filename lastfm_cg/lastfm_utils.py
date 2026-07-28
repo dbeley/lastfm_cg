@@ -1,8 +1,9 @@
-import requests
-from tqdm import tqdm
-from PIL import Image
-from io import BytesIO
 import logging
+from io import BytesIO
+
+import requests
+from PIL import Image
+from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 logging.getLogger("requests").setLevel(logging.WARNING)

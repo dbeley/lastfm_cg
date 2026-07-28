@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 """
 Post new lastfm_cg collages from a directory to twitter or mastodon.

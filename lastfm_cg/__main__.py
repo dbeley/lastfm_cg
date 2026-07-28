@@ -2,14 +2,15 @@
 Create lastfm album collage for an user
 """
 
-import logging
-import time
 import argparse
 import configparser
-import pylast
+import logging
 import os
-from . import image_utils
-from . import lastfm_utils
+import time
+
+import pylast
+
+from . import image_utils, lastfm_utils
 
 logger = logging.getLogger()
 logging.getLogger("requests").setLevel(logging.WARNING)
@@ -42,10 +43,10 @@ def lastfmconnect(api_key=None, api_secret=None):
             )
             if not os.path.exists(user_config_dir):
                 logger.info(
-                    (
+
                         "Configuration folder not found. "
                         "Creating ~/.config/lastfm_cg/."
-                    )
+
                 )
                 os.makedirs(user_config_dir)
             if not os.path.isfile(user_config_dir + "config.ini"):
@@ -55,12 +56,12 @@ def lastfmconnect(api_key=None, api_secret=None):
                 with open(user_config_dir + "config.ini", "w") as f:
                     f.write(sample_config)
                 logger.info(
-                    (
+
                         "A sample configuration file has been created at "
                         "~/.config/lastfm_cg/config.ini. Go to "
                         "https://www.last.fm/api to create your own API keys "
                         "and put them in the configuration file."
-                    )
+
                 )
             exit()
         network = pylast.LastFMNetwork(api_key=api_key, api_secret=api_secret)
@@ -102,8 +103,6 @@ def main():
 
     for username in users:
         user = network.get_user(username)
-
-        nb_covers = args.rows * args.columns if not args.top100 else 100
 
         img = get_lastfm_collage(
             user, args.timeframe, args.rows, args.columns, args.top100

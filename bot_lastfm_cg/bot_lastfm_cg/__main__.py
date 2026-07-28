@@ -1,12 +1,13 @@
-import logging
+import argparse
 import configparser
 import datetime
-import argparse
-import tweepy
+import logging
 import os
-from PIL import Image
 from pathlib import Path
+
+import tweepy
 from mastodon import Mastodon
+from PIL import Image
 
 logger = logging.getLogger()
 logging.getLogger("requests_oauthlib").setLevel(logging.CRITICAL)
@@ -22,7 +23,7 @@ def check_config(config_file):
         global CONFIG
         CONFIG = configparser.ConfigParser()
         CONFIG.read(config_file)
-        api_key = CONFIG["twitter"]["consumer_key"]
+        _ = CONFIG["twitter"]["consumer_key"]
     except Exception as e:
         logger.error(
             (
@@ -201,14 +202,14 @@ def main():
 
     # Loading already uploaded images
     if not args.no_upload and Path(done_filename).is_file():
-        with open(done_filename, "r") as f:
+        with open(done_filename) as f:
             done_list = [x.strip() for x in f.readlines()]
     else:
         done_list = []
     logger.debug(f"Images already posted : {done_list}.")
 
     # Reading tweet template
-    with open(args.template_file, "r") as myfile:
+    with open(args.template_file) as myfile:
         tweet_template = myfile.read()
 
     # Processing image one by one
@@ -273,7 +274,8 @@ def parse_args():
     parser.add_argument(
         "--timeframe",
         "-t",
-        help="Only post pictures for a specific timeframe (Available choices : 7day, 1month, 3month, 6month, 12month, overall, all).",
+        help=("Only post pictures for a specific timeframe "
+              "(Available choices: 7day, 1month, 3month, 6month, 12month, overall, all)."),
         default="all",
         type=str,
     )

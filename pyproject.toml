@@ -1,3 +1,44 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta:__legacy__"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lastfm_cg"
+version = "1.6.0"
+description = "Generate covers collage from albums listened by a lastfm user"
+authors = [{name = "dbeley", email = "dbeley@protonmail.com"}]
+license = {text = "GPL-3.0-only"}
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "pylast",
+    "numpy",
+    "pillow",
+    "requests",
+    "tqdm",
+]
+
+[project.urls]
+Homepage = "https://github.com/dbeley/lastfm_cg"
+
+[project.scripts]
+lastfm_cg = "lastfm_cg.__main__:main"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["lastfm_cg"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = ["if self.debug:", "pragma: no cover", "raise NotImplementedError", "if __name__ == .__main__.:", "raise AssertionError"]
+omit = ["lastfm_cg/__init__.py", "tests/*", "setup.py"]
