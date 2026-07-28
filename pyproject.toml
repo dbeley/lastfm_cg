@@ -4,18 +4,18 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lastfm_cg"
-version = "1.6.0"
+version = "1.7.0"
 description = "Generate covers collage from albums listened by a lastfm user"
 authors = [{name = "dbeley", email = "dbeley@protonmail.com"}]
 license = {text = "GPL-3.0-only"}
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
-    "pylast",
-    "numpy",
-    "pillow",
-    "requests",
-    "tqdm",
+    "pylast>=7.1",
+    "numpy>=2.5",
+    "pillow>=12.3",
+    "requests>=2.34",
+    "tqdm>=4.70",
 ]
 
 [project.urls]
