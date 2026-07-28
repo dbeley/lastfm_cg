@@ -1,7 +1,7 @@
 -i https://pypi.org/simple
 blurhash==1.1.4
 -e .
-certifi==2023.5.7 ; python_version >= '3.6'
+certifi==2026.7.22 ; python_version >= '3.6'
 charset-normalizer==3.1.0 ; python_full_version >= '3.7.0'
 decorator==5.1.1 ; python_version >= '3.5'
 idna==3.4 ; python_version >= '3.5'
